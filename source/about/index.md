@@ -1,8 +1,8 @@
 ---
 title: 关于我
 date: 2022-05-16 08:57:34
-type: "about"
-layout: "pages"
+type: about
+layout: pages
 ---
 
 # 菜
