@@ -409,7 +409,7 @@ github_banner:
 # ---------------------------------------------------------------
 
 font:
-  enable: false
+  enable: true
 
   # Uri of fonts host, e.g. https://fonts.googleapis.com (Default).
   host: https://fonts.googleapis.com
@@ -422,7 +422,7 @@ font:
   # Global font settings used for all elements inside <body>.
   global:
     external: true
-    family:
+    family: Noto Serif SC
     size:
 
   # Font settings for site title (.site-title).
