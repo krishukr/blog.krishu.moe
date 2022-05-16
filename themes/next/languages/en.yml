@@ -43,6 +43,7 @@ footer:
   powered: "Powered by %s"
   total_views: Total Views
   total_visitors: Total Visitors
+  source: "Source code at %s"
 
 counter:
   tag_cloud:
