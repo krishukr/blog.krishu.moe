@@ -10,6 +10,10 @@
   </div>
 {%- endif %}
 
+<div class="beian">
+  <a href="https://icp.gov.moe/?keyword=20220708" target="_blank">萌ICP备20220708号</a>
+</div>
+
 <div class="copyright">
   {% set copyright_year = date(null, 'YYYY') %}
   &copy; {% if theme.footer.since and theme.footer.since != copyright_year %}{{ theme.footer.since }} – {% endif %}
