@@ -105,6 +105,16 @@ bool query(const std::string& s) {
 
 Trie 的一些{% label primary@高端操作%}。
 
+{% note info %}
+
+以下内容均不是题解，仅为重点思路。
+
+碍于笔者能力所限，所选题目均是以好讲为第一出发点而主观选择的。
+
+希望借此打开读者思路，引发读者思考。
+
+{% endnote %}
+
 ## Trie + 重构
 
 - 给定 $n$ 个单词 $s_i$，重排所有单词。[^3]
@@ -113,7 +123,9 @@ Trie 的一些{% label primary@高端操作%}。
 
 显然有：一个单词与其后缀，后缀先插入会更优。
 
-首先考虑到维护后缀比较困难，我们可以**反转单词**来转化成维护前缀。于是我们可以用 Trie 来维护。
+考虑到维护后缀比较困难，我们可以**反转单词**来转化成维护前缀。于是我们可以用 Trie 来维护。
+
+统计答案时，我们只需要关心所有所有单词，即 Trie 上有标记的关键点。
 
 使用并查集保留所有关键点，然后 dfs 即可。
 
@@ -217,6 +229,252 @@ void dfs2(int x) {
 ```
 <a name="skip-code-1"></a>
 
+## Trie + 判环
+
+- 给定 $n$ 个单词。[^4]
+- 你可以指定字母表顺序，然后按此字典序排序所有的单词。
+- 问有多少单词可以字典序最小。
+
+首先有一个显然的性质，如果一个单词有其前缀单词，那么前缀单词必然比这个单词小，即不可能满足题目要求。我们建 Trie 维护这一信息。
+
+接着考虑，我们不妨假设某个单词为字典序最小，对其中的每个字母向 Trie 节点上的其他存在的{% label @后驱边%}[^5]建图。如果图中有环，则说明与我们的假设矛盾。
+
+以 $\texttt{mm, mo, om}$ 为例子，假设 $\texttt{mo}$ 最小，那么我们有 $\texttt{m} < \texttt{o}$ 且 $\texttt{o} < \texttt{m}$ 。其构成一个环。
+
+<a href="#skip-code-2" style="font-size: 0.75em; float: right; margin-right: 5px;">跳过代码</a>
+
+```cpp
+#include <bits/stdc++.h>
+
+template <typename T>
+using arr = std::array<T, 30>;
+
+constexpr int MAX_N = 300050;
+
+class Trie {
+   protected:
+    struct Node {
+        mutable bool v;
+        std::unordered_map<char, std::shared_ptr<Node>> son;
+    };
+
+    void topos(const arr<arr<bool>>&& e, arr<int>& d);
+
+   public:
+    Trie() = default;
+    ~Trie() = default;
+
+    std::shared_ptr<Node> root = std::make_shared<Node>();
+
+    void insert(const std::string& s);
+
+    bool query(const std::string& s);
+};
+
+std::string s[MAX_N];
+
+int main() {
+    std::ios::sync_with_stdio(false);
+
+    int n;
+    std::cin >> n;
+    for (int i = 1; i <= n; i++) {
+        std::cin >> s[i];
+    }
+
+    auto trie = std::make_unique<Trie>();
+    for (int i = 1; i <= n; i++) {
+        trie->insert(s[i]);
+    }
+
+    std::vector<std::string> ans;
+    for (int i = 1; i <= n; i++) {
+        if (trie->query(s[i])) {
+            ans.push_back(s[i]);
+        }
+    }
+
+    std::cout << ans.size() << '\n';
+    for (const auto& i : ans) {
+        std::cout << i << '\n';
+    }
+
+    return 0;
+}
+
+void Trie::insert(const std::string& s) {
+    auto c = root;
+    for (const auto& i : s) {
+        c = ((c->son.find(i) != c->son.end())
+                 ? c->son[i]
+                 : (c->son[i] = std::make_shared<Node>()));
+    }
+    c->v = true;
+}
+
+void Trie::topos(const arr<arr<bool>>&& e, arr<int>& d) {
+    std::queue<int> q;
+    for (int i = 0; i < 26; i++) {
+        if (!d[i]) {
+            q.push(i);
+        }
+    }
+
+    while (!q.empty()) {
+        int p = q.front();
+        q.pop();
+        for (int i = 0; i < 26; i++) {
+            if (e[p][i]) {
+                d[i]--;
+                if (!d[i]) {
+                    q.push(i);
+                }
+            }
+        }
+    }
+}
+
+bool Trie::query(const std::string& s) {
+    arr<arr<bool>> e{};
+    arr<int> d{};
+
+    auto c = root;
+    for (const auto& i : s) {
+        const auto x = i - 'a';
+        if (c->v) {
+            return false;
+        }
+        for (int j = 0; j < 26; j++) {
+            if (x != j and c->son.find(j + 'a') != c->son.end() and !e[x][j]) {
+                e[x][j] = true;
+                d[j]++;
+            }
+        }
+        c = c->son[i];
+    }
+    topos(std::move(e), d);
+
+    for (int i = 0; i < 26; i++) {
+        if (d[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+```
+<a name="skip-code-2"></a>
+
+## Trie + 贪心
+
+- 给定 $n$ 个单词。[^6]
+- 通过以下 $3$ 种操作，输出所有单词。最小化操作数。
+    1. 在缓冲区尾部**插入**一个单词
+    2. 在缓冲区尾部**删除**一个单词
+    3. **输出**缓冲区
+
+首先注意到，操作 $1$ 和操作 $3$ 的次数是一定的，所以我们要尽可能降低回溯深度。
+
+考虑建 Trie ，于是我们可以将字符串间相同的前缀合并，以此减少回溯。
+
+因为最后一个字符串不用删除，我们不妨钦定最长的字符串最后输出。
+
+Trie 上 dfs 输出即可。
+
+<a href="#skip-code-3" style="font-size: 0.75em; float: right; margin-right: 5px;">跳过代码</a>
+
+```cpp
+#include <cstdio>
+#include <iostream>
+
+constexpr int MAX_N = 500050;
+
+std::string s[MAX_N / 10];
+
+struct Node {
+    bool m;
+    bool v;
+    int son[32];
+} trie[MAX_N];
+
+int cnt = 1, ans, n;
+std::string as;
+
+void insert(const std::string& s);
+
+void solve(int k);
+
+int main() {
+    std::ios::sync_with_stdio(false);
+
+    int m{}, p{};
+    std::cin >> n;
+    for (int i = 1; i <= n; i++) {
+        std::cin >> s[i];
+        if (m < s[i].length()) {
+            m = s[i].length();
+            p = i;
+        }
+        insert(s[i]);
+    }
+
+    {
+        int c = 1;
+        for (const auto& i : s[p]) {
+            const auto x = i - 'a';
+            c = trie[c].son[x];
+            trie[c].m = true;
+        }
+    }
+
+    solve(1);
+
+    return 0;
+}
+
+void insert(const std::string& s) {
+    int c = 1;
+    for (const auto& i : s) {
+        const auto x = i - 'a';
+        c = (trie[c].son[x] ? trie[c].son[x] : (trie[c].son[x] = ++cnt));
+    }
+    trie[c].v = true;
+}
+
+void solve(int k) {
+    if (trie[k].v) {
+        ans++;
+        as.push_back('P');
+    }
+    if (ans == n) {
+        std::cout << as.length() << '\n';
+        for (const auto& i : as) {
+            std::cout << i << '\n';
+        }
+        return;
+    }
+
+    for (int x = 0; x < 26; x++) {
+        if (trie[k].son[x] and !trie[trie[k].son[x]].m) {
+            as.push_back(x + 'a');
+            solve(trie[k].son[x]);
+            as.push_back('-');
+        }
+    }
+
+    for (int x = 0; x < 26; x++) {
+        if (trie[k].son[x] and trie[trie[k].son[x]].m) {
+            as.push_back(x + 'a');
+            solve(trie[k].son[x]);
+            as.push_back('-');
+        }
+    }
+}
+```
+<a name="skip-code-3"></a>
+
 [^1]: 就是 KMP 的失配指针
 [^2]: 炫技成分偏多（
 [^3]: [洛谷 P3294 [SCOI2016]背单词](https://www.luogu.com.cn/problem/P3294)
+[^4]: [洛谷 P3065 [USACO12DEC]First! G](https://www.luogu.com.cn/problem/P3065)
+[^5]: 即有相同前缀的其它字符串的同层级字母
+[^6]: [洛谷 P4683 [IOI2008] Type Printer](https://www.luogu.com.cn/problem/P4683)
