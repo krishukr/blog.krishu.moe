@@ -164,7 +164,7 @@ sidebar:
 # Sidebar Avatar
 avatar:
   # Replace the default image and set the url here.
-  url: https://s2.loli.net/2022/05/16/B4ug3wrz7jZ9KUp.png
+  url: https://img-cdn.akass.cn/12/2022/05/6283b85f8804c.png
   # If true, the avatar will be dispalyed in circle.
   rounded: true
   # If true, the avatar will be rotated with the cursor.
