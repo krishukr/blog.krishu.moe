@@ -8,6 +8,13 @@ tags:
 categories: 笔记
 ---
 
+{% note warning %}
+
+这篇博文尚未经过全面校对。
+
+其中可能存在表述不清、错字别字甚至事实性错误。
+
+{% endnote %}
 
 # 起
 
@@ -462,9 +469,336 @@ void solve(int k) {
 ```
 <a name="skip-code-3"></a>
 
+# 转
+
+除了把 Trie 用于维护字符串相关问题，我们还可以将一个数的**二进制**看作一个字符串，其字符集只包括 $\texttt{0}$ 和 $\texttt{1}$。可以高效维护异或相关等问题。
+
+## 异或极值
+
+- 给定一颗带边权的树。[^7]
+- 求树上的一条链，其上边权异或和最大。
+
+假设树的根为 $r$，链 $\left( a, b \right)$ 的异或和为 $\operatorname{xor}\left( a, b \right)$ 我们有：[^8]
+
+$$
+\operatorname{xor}\left( a, b \right) = \operatorname{xor}\left( a, r \right) \oplus \operatorname{xor}\left( r, b \right)
+$$
+
+不妨维护一个 $s_i = \operatorname{xor}\left( i, r \right)$ ，此时问题转化为**任选两个数，使他们的异或和最大**。
+
+考虑 Trie + 贪心，对于 Trie 上的一个节点，如果能往与当前位不同的后驱走，则往那边走。
+
+<a href="#skip-code-4" style="font-size: 0.75em; float: right; margin-right: 5px;">跳过代码</a>
+
+```cpp
+#include <cstdio>
+#include <iostream>
+#include <memory>
+
+constexpr int MAX_N = 100050;
+constexpr int MAX_L = 30;
+
+struct Node {
+    int v;
+    int nxt;
+    int w;
+} node[MAX_N << 1];
+
+int head[MAX_N];
+int cnt;
+
+void create(int u, int v, int w);
+
+int a[MAX_N];
+
+void dfs(int x, int f);
+
+class Trie {
+   protected:
+    struct Node {
+        std::shared_ptr<Node> son[2]{nullptr, nullptr};
+    };
+
+   public:
+    Trie() = default;
+    ~Trie() = default;
+
+    std::shared_ptr<Node> root = std::make_shared<Node>();
+
+    void insert(int a);
+
+    int query(int a);
+};
+
+template <typename T>
+T read();
+
+template <typename T>
+void read(T& t);
+
+template <typename T, typename... Args>
+void read(T& t, Args&... rest);
+
+int main() {
+    std::ios::sync_with_stdio(false);
+
+    int n;
+    read(n);
+    for (int i = 1; i < n; i++) {
+        int u, v, w;
+        read(u, v, w);
+        create(u, v, w);
+        create(v, u, w);
+    }
+    dfs(1, 0);
+
+    auto trie = std::make_unique<Trie>();
+    for (int i = 1; i <= n; i++) {
+        trie->insert(a[i]);
+    }
+
+    int ans = 0;
+    for (int i = 1; i <= n; i++) {
+        ans = std::max(ans, trie->query(a[i]));
+    }
+    std::cout << ans << '\n';
+
+    return 0;
+}
+
+void create(int u, int v, int w) {
+    node[++cnt].v = v;
+    node[cnt].nxt = head[u];
+    node[cnt].w = w;
+    head[u] = cnt;
+}
+
+void dfs(int x, int f) {
+    for (int i = head[x]; i; i = node[i].nxt) {
+        int v = node[i].v, w = node[i].w;
+        if (v == f) {
+            continue;
+        }
+        a[v] = a[x] ^ w;
+        dfs(v, x);
+    }
+}
+
+void Trie::insert(int a) {
+    auto c = root;
+    for (int i = MAX_L; i >= 0; i--) {
+        const int x = (a >> i) & 1;
+        c = (c->son[x] ? c->son[x] : (c->son[x] = std::make_shared<Node>()));
+    }
+}
+
+int Trie::query(int a) {
+    auto c = root;
+    int ans{0};
+    for (int i = MAX_L; i >= 0; i--) {
+        const int x = (a >> i) & 1;
+        if (c->son[x ^ 1]) {
+            c = c->son[x ^ 1];
+            ans = (ans << 1) | (x ^ 1);
+        } else {
+            c = c->son[x];
+            ans = (ans << 1) | x;
+        }
+    }
+    return ans ^ a;
+}
+
+template <typename T>
+T read() {
+    T x = 0, f = 1;
+    char ch = getchar();
+    while (!isdigit(ch)) {
+        if (ch == '-') f = -1;
+        ch = getchar();
+    }
+    while (isdigit(ch)) {
+        x = x * 10 + ch - 48;
+        ch = getchar();
+    }
+    return x * f;
+}
+
+template <typename T>
+void read(T& t) {
+    t = read<T>();
+}
+
+template <typename T, typename... Args>
+void read(T& t, Args&... rest) {
+    t = read<T>();
+    read(rest...);
+}
+```
+<a name="skip-code-4"></a>
+
+## <ruby><rb>Trie</rb><rp>[</rp><rt>线段树</rt><rp>]</rp></ruby>
+
+> 我也很喜欢你，Trie！
+> 
+> 我喜欢 Trie，还有大家！
+
+- 你有一个模式串池。
+- 给定每个时刻模式串池的**添加或删除**变化，多次询问。[^9]
+- 每次询问给定一个 01 字符串，问 $\left[ a,b \right]$ 时刻内所有模式串中最长前缀变了几次。
+
+看到最长前缀匹配就应该想到 Trie 了。
+
+显然答案是区间可加的，有 $\operatorname{ans}\left[ a,b \right] = \operatorname{ans}\left[ 1,b \right] - \operatorname{ans}\left[ 1,a \right)$ 。离线模式串池的变化。
+
+假设存在两个模式串 $a,b$ ，其中 $a$ 是 $b$ 的前缀，对 $a$ 的修改影响的部分即为 {% label @$T_a - T_b$ %}[^10] 。我们从线段树那偷一个东西叫**懒标记**，与 Trie 杂交，这道题就做完了。
+
+最后注意 Trie 是动态开点的。
+
+<a href="#skip-code-5" style="font-size: 0.75em; float: right; margin-right: 5px;">跳过代码</a>
+
+```cpp
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <vector>
+
+constexpr int MAX_N = 100050;
+
+struct R {
+    std::string ip;
+    int op;
+} r[MAX_N];
+
+struct Q {
+    std::string ip;
+    int idx;
+} qa[MAX_N];
+
+std::vector<int> dq[MAX_N], aq[MAX_N];
+int ans[MAX_N];
+
+class Trie {
+   private:
+    struct Node {
+        bool v;
+        int son[2];
+        int t;
+        int a;
+    } trie[MAX_N << 5];
+
+    void pushdown(const int& x);
+
+   public:
+    Trie() = default;
+    ~Trie() = default;
+
+    int cnt = 1;
+
+    void mod(const std::string& s, const int& mv);
+
+    int query(const std::string& s);
+};
+
+int main() {
+    std::ios::sync_with_stdio(false);
+
+    int n, q;
+    std::cin >> n >> q;
+    for (int i = 1; i <= n; i++) {
+        std::string op;
+        std::cin >> op >> r[i].ip;
+        r[i].op = (op[0] == 'A' ? 1 : -1);
+    }
+    for (int i = 1; i <= q; i++) {
+        std::cin >> qa[i].ip;
+        qa[i].idx = i;
+
+        int l, r;
+        std::cin >> l >> r;
+        aq[r].push_back(i);
+        dq[l].push_back(i);
+    }
+
+    auto trie = std::make_unique<Trie>();
+    for (int i = 1; i <= n; i++) {
+        trie->mod(r[i].ip, r[i].op);
+        for (const auto& j : aq[i]) {
+            ans[qa[j].idx] += trie->query(qa[j].ip);
+        }
+        for (const auto& j : dq[i]) {
+            ans[qa[j].idx] -= trie->query(qa[j].ip);
+        }
+    }
+    for (int i = 1; i <= q; i++) {
+        std::cout << ans[i] << '\n';
+    }
+
+    return 0;
+}
+
+#define lc trie[x].son[0]
+#define rc trie[x].son[1]
+
+void Trie::pushdown(const int& x) {
+    if (!lc) {
+        lc = ++cnt;
+    }
+    if (!rc) {
+        rc = ++cnt;
+    }
+    if (trie[x].t) {
+        if (!trie[lc].v) {
+            trie[lc].t += trie[x].t;
+            trie[lc].a += trie[x].t;
+        }
+        if (!trie[rc].v) {
+            trie[rc].t += trie[x].t;
+            trie[rc].a += trie[x].t;
+        }
+        trie[x].t = 0;
+    }
+}
+
+void Trie::mod(const std::string& s, const int& mv) {
+    int c = 1;
+    for (const auto& i : s) {
+        const auto x = i - '0';
+        pushdown(c);
+        c = trie[c].son[x];
+    }
+    trie[c].v += mv;
+    trie[c].a += 1;
+    trie[c].t += 1;
+}
+
+int Trie::query(const std::string& s) {
+    int c = 1;
+    for (const auto& i : s) {
+        const auto x = i - '0';
+        pushdown(c);
+        c = trie[c].son[x];
+    }
+    return trie[c].a;
+}
+
+#undef lc
+#undef rc
+```
+<a name="skip-code-5"></a>
+
+注意到我们成功给 Trie 嫁接了线段树的懒标记。
+
+这不禁让我们思考 Trie 与线段树的关系。
+
+# 合
+
 [^1]: 就是 KMP 的失配指针
 [^2]: 炫技成分偏多（
 [^3]: [洛谷 P3294 [SCOI2016]背单词](https://www.luogu.com.cn/problem/P3294)
 [^4]: [洛谷 P3065 [USACO12DEC]First! G](https://www.luogu.com.cn/problem/P3065)
 [^5]: 即有相同前缀的其它字符串的同层级字母
 [^6]: [洛谷 P4683 [IOI2008] Type Printer](https://www.luogu.com.cn/problem/P4683)
+[^7]: [洛谷 P4551 最长异或路径](https://www.luogu.com.cn/problem/P4551)
+[^8]: 因为 LCA 及以上的部分会经过两次，相互抵消
+[^9]: [洛谷 P5460 [BJOI2016]IP地址](https://www.luogu.com.cn/problem/P5460)
+[^10]: $T_i$ 表示字符串 $i$ 所在节点的子树
