@@ -534,6 +534,13 @@
   dependencies:
     "sprintf-js" "^1.0.3"
 
+"hexo-lazyload-image@^1.0.10":
+  "integrity" "sha512-sbmO1b4GOEK2zshHAlPfPC9ZCpcAZ7E9PEeZkgDyHKoVjUwSQy6noQfejYiC48j9TV3/Bvyscx4ESol8PXVBEQ=="
+  "resolved" "https://registry.npmjs.org/hexo-lazyload-image/-/hexo-lazyload-image-1.0.10.tgz"
+  "version" "1.0.10"
+  dependencies:
+    "uglify-js" "^3.0.27"
+
 "hexo-log@^2.0.0":
   "integrity" "sha512-U7zdDae74pXcyhQEyNmpJdq3UI6zWKxQ7/zLoMr/d3CBRdIfB5yO8DWqKUnewfibYv0gODyTWUIhxQDWuwloow=="
   "resolved" "https://registry.npmjs.org/hexo-log/-/hexo-log-2.0.0.tgz"
@@ -1254,6 +1261,11 @@
   "integrity" "sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ=="
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-2.4.0.tgz"
   "version" "2.4.0"
+
+"uglify-js@^3.0.27":
+  "integrity" "sha512-hNM5q5GbBRB5xB+PMqVRcgYe4c8jbyZ1pzZhS6jbq54/4F2gFK869ZheiE5A8/t+W5jtTNpWef/5Q9zk639FNQ=="
+  "resolved" "https://registry.npmjs.org/uglify-js/-/uglify-js-3.15.5.tgz"
+  "version" "3.15.5"
 
 "unpipe@~1.0.0":
   "integrity" "sha1-sr9O6FFKrmFltIF4KdIbLvSZBOw="
