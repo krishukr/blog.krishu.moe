@@ -1,20 +1,12 @@
 ---
 title: Trie 树学习笔记
-date: 2022-05-16 20:33:40
+date: 2022-05-18 15:37:18
 tags:
   - 字符串
   - 数据结构
   - Trie
 categories: 笔记
 ---
-
-{% note warning %}
-
-这篇博文尚未经过全面校对。
-
-其中可能存在表述不清、错字别字甚至事实性错误。
-
-{% endnote %}
 
 # 起
 
@@ -24,17 +16,17 @@ Trie，又称前缀树或字典树。一个字符串由其经过的所有边表�
 
 <!-- more -->
 
-![实际中每个节点并不会保存自己的前缀，此处为了方便理解](https://upload.wikimedia.org/wikipedia/commons/b/be/Trie_example.svg)
+![实际中每个节点并不会保存自己所表示的字符串，此处为了方便理解](https://upload.wikimedia.org/wikipedia/commons/b/be/Trie_example.svg)
 
-Trie 树通常被用于查找字符串，相比较字符串哈希，Trie 树可以动态的查找，也可以对每一个前缀节点维护信息。当然，字符串哈希的执行效率更高。
+Trie 通常被用于查找字符串，相比较字符串哈希，Trie 树可以动态的查找，也可以对每一个节点维护信息。当然，仅查找字符串而言哈希的执行效率更高。
 
-通常，我们会在每个插入的末尾节点打标记以表明这里有一个字符串。
+通常，我们会在每次插入的末尾打上标记以表明这里有一个字符串。
 
-AC 自动机便是对 Trie 树上的每一个节点维护{% label @失配指针%}[^1]来进行高效模式匹配。
+AC 自动机便是对 Trie 上的每一个节点维护{% label @失配指针%}[^1]来进行高效模式匹配。
 
 ## 实现
 
-对于{% label info@普通的%} Trie，我们通常有 $\texttt{std::unordered_map} + \texttt{std::shared_ptr}$[^2] 与**数组版**两种实现。
+对于{% label info@普通的%} Trie，我们通常有 $\texttt{std::unordered_map} + \texttt{std::shared_ptr}$[^2] 与**数组**两种实现。
 
 ```cpp
 class Trie {
@@ -792,6 +784,197 @@ int Trie::query(const std::string& s) {
 
 # 合
 
+线段树是二叉树；01 Trie 也是二叉树。
+
+我们可以粗略的认为，01 Trie 是一颗动态开点的线段树。
+
+线段树往左递归相当于选 $0$ ，往右递归相当于选 $1$ 。这样，每个节点所表示的 $01$ 串正好是其下标的**二进制**。
+
+这也意味着线段树的高端操作同样可以运用在 {% label @01 Trie %}[^11] 上，如线段树合并、线段树分裂等。
+
+最后，我们再看一道题吧。
+
+- 给一个序列 $a$ ，进行如下操作。强制在线。[^12][^13]
+  1. 对所有满足 $i \equiv y \left( \bmod 2^x \right)$ 的 $a_i$ 加上 $v$
+  2. 查询所有满足 $i \equiv y \left( \bmod 2^x \right)$ 的 $a_i$ 之和
+
+翻译一下，对于所有满足条件的下标 $i$ ，有长度为 $x$ 的公共后缀 $x$ 。
+
+经典套路，翻转过来，我们就可以方便地用 Trie 维护前缀。
+
+按上文所述方法，使用线段树的操作维护这颗二叉树。
+
+<a href="#skip-code-6" style="font-size: 0.75em; float: right; margin-right: 5px;">跳过代码</a>
+
+```cpp
+#include <cstdio>
+#include <iostream>
+#include <memory>
+
+#define int long long
+
+constexpr int MAX_N = 2200050;
+constexpr int MAX_L = 21;
+
+class Trie {
+   private:
+    struct Node {
+        int siz;
+        int son[2];
+        int a;
+        int t;
+    } trie[MAX_N << 1];
+
+    int cnt;
+
+    void seg_merge(const int& x);
+
+    void pushdown(const int& x);
+
+   public:
+    Trie() = default;
+    ~Trie() = default;
+
+    int build(const int x, const int d);
+
+    void mod(int x, int d, const int& mx, const int& my, const int& mv);
+
+    int query(const int& r, const int& mx, const int& my);
+};
+
+int a[MAX_N];
+int n, m;
+
+template <typename T>
+T read();
+
+template <typename T>
+void read(T& t);
+
+template <typename T, typename... Args>
+void read(T& t, Args&... rest);
+
+signed main() {
+    std::ios::sync_with_stdio(false);
+
+    read(n, m);
+    for (int i = 1; i <= n; i++) {
+        read(a[i]);
+    }
+
+    auto trie = std::make_unique<Trie>();
+    const int root = trie->build(0, 0);
+
+    int la{};
+    while (m--) {
+        int op, x, y;
+        read(op, x, y);
+        op = (op + la) % 2 + 1;
+        y &= (1 << x) - 1;
+
+        if (op == 1) {
+            trie->mod(root, 0, x, y, read<int>());
+        } else {
+            la = trie->query(root, x, y);
+            std::cout << la << '\n';
+        }
+    }
+
+    return 0;
+}
+
+#define lc trie[x].son[0]
+#define rc trie[x].son[1]
+
+void Trie::seg_merge(const int& x) { trie[x].a = trie[lc].a + trie[rc].a; }
+
+void Trie::pushdown(const int& x) {
+    if (trie[x].t) {
+        trie[lc].a += trie[lc].siz * trie[x].t;
+        trie[lc].t += trie[x].t;
+        trie[rc].a += trie[rc].siz * trie[x].t;
+        trie[rc].t += trie[x].t;
+        trie[x].t = 0;
+    }
+}
+
+int Trie::build(const int x, const int d) {
+    int c = ++cnt;
+    if (d == MAX_L) {
+        if (x <= n) {
+            trie[c].a = a[x];
+            trie[c].siz = (int)((bool)(x));
+        }
+        return c;
+    }
+    trie[c].son[0] = build(x, d + 1);
+    trie[c].son[1] = build(x | (1 << d), d + 1);
+    trie[c].siz = trie[trie[c].son[0]].siz + trie[trie[c].son[1]].siz;
+    seg_merge(c);
+    return c;
+}
+
+void Trie::mod(int x, int d, const int& mx, const int& my, const int& mv) {
+    if (d >= mx) {
+        trie[x].a += trie[x].siz * mv;
+        trie[x].t += mv;
+        return;
+    }
+    pushdown(x);
+    mod(trie[x].son[(int)((bool)(my & (1 << d)))], d + 1, mx, my, mv);
+    seg_merge(x);
+}
+
+int Trie::query(const int& r, const int& mx, const int& my) {
+    int x = r;
+    for (int d = 0; d < mx; d++) {
+        pushdown(x);
+        x = trie[x].son[(int)((bool)(my & (1 << d)))];
+    }
+    return trie[x].a;
+}
+
+#undef lc
+#undef rc
+
+template <typename T>
+T read() {
+    T x = 0, f = 1;
+    char ch = getchar();
+    while (!isdigit(ch)) {
+        if (ch == '-') f = -1;
+        ch = getchar();
+    }
+    while (isdigit(ch)) {
+        x = x * 10 + ch - 48;
+        ch = getchar();
+    }
+    return x * f;
+}
+
+template <typename T>
+void read(T& t) {
+    t = read<T>();
+}
+
+template <typename T, typename... Args>
+void read(T& t, Args&... rest) {
+    t = read<T>();
+    read(rest...);
+}
+```
+<a name="skip-code-6"></a>
+
+---
+
+至此，此文讲解了 Trie 与 01 Trie 的一些操作。希望对你有所启发。
+
+碍于笔者能力所限，还有一些手法无法很好地阐述，还有**可持久化 Trie **也没有讲。
+
+如果你对本文内容有指正或者疑问，欢迎[邮件](mailto:i@krishu.moe)联系我。
+
+祝你学业进步。
+
 [^1]: 就是 KMP 的失配指针
 [^2]: 炫技成分偏多（
 [^3]: [洛谷 P3294 [SCOI2016]背单词](https://www.luogu.com.cn/problem/P3294)
@@ -802,3 +985,6 @@ int Trie::query(const std::string& s) {
 [^8]: 因为 LCA 及以上的部分会经过两次，相互抵消
 [^9]: [洛谷 P5460 [BJOI2016]IP地址](https://www.luogu.com.cn/problem/P5460)
 [^10]: $T_i$ 表示字符串 $i$ 所在节点的子树
+[^11]: 或许甚至推广至普通 Trie 上？我不知道
+[^12]: [洛谷 P6587 超超的序列 加强](https://www.luogu.com.cn/problem/P6587)
+[^13]: 这题挺粪的，理解即可
