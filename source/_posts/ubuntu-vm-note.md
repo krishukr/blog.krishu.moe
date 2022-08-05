@@ -60,7 +60,7 @@ Ubuntu Server 使用 <ruby><rb>LVM</rb><rt>Logical Volume Management</rt></ruby>
 
 确实比较复杂，但也很灵活。
 
-我用的是 vSphere 虚拟机。首先在 vCenter 里增加分配的磁盘大小。
+我用的是 vSphere 虚拟机。首先在 vCenter 里增加磁盘容量。
 
 ![](https://img-cdn.akass.cn/12/2022/08/62ed0c9f7900f.png)
 
@@ -129,7 +129,7 @@ $ sudo pvcreate /dev/sda4
   Physical volume "/dev/sda4" successfully created.
 ```
 
-新的 PV 新建完成。请记住这个新的 PV 名。
+PV 新建完成。请记住这个新的 PV 名。
 
 回忆一下上面的架构图，我们需要将 PV 添加到 <ruby><rb>VG</rb><rt>Volume Group</rt></ruby> 内。
 
@@ -150,7 +150,7 @@ $ sudo vgextend ubuntu-vg /dev/sda4
 
 现在我们需要将扩展完成的 VG 扩展到 <ruby><rb>LV</rb><rt>Logical Volume</rt></ruby> 内。
 
-再次 `sudo fdisk -l` 列出设备。
+再次 `sudo fdisk -l` 列出所有设备。
 
 ```
 (...)
