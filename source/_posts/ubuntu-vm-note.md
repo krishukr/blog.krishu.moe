@@ -56,13 +56,13 @@ network:
 
 Ubuntu Server 使用 <ruby><rb>LVM</rb><rt>Logical Volume Management</rt></ruby> 管理磁盘。架构如图。
 
-![](https://img-cdn.akass.cn/12/2022/08/62ed0e2c364dd.png!wp)
+![](https://img-cdn.akass.cn/12/2022/08/62ed0e2c364dd.png)
 
 确实比较复杂，但也很灵活。
 
 我用的是 vSphere 虚拟机。首先在 vCenter 里增加磁盘容量。
 
-![](https://img-cdn.akass.cn/12/2022/08/62ed0c9f7900f.png!wp)
+![](https://img-cdn.akass.cn/12/2022/08/62ed0c9f7900f.png)
 
 `sudo reboot` 重启，使更改生效。
 
