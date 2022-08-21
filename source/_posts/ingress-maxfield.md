@@ -146,7 +146,7 @@ python3 bin/maxfield-plan 1.txt -n 1 -c 0 -o test -v
 - `agent_key_preparation.txt` 写明了每位参与特工所需准备的 key；
 - `key_preparation.txt` 写明了全部所需准备的 key；
 - `link_map.png` 是完成后的参考图；
-- `ownership_preparation.txt` 写明了需要提前插满 8 脚的 Portal；
+- `ownership_preparation.txt` 写明了需要提前插满脚的 Portal；
 
 我推荐将 `ownership_preparation.txt` 、 `key_preparation.txt` 和 `agent_assignments.txt` 打印出来。
 
