@@ -27,7 +27,7 @@ cd maxfield
 
 maxfield 生成 GIF 图的效率低下，且实际使用中似乎很少会去看 GIF，所以我们简单修改一下源码。
 
-在 `maxfield/results.py` 中拉到最底下，将如下部分注释掉。
+在 `maxfield/results.py` 中拉到最底下，将如下部分**注释**掉。
 
 ```python
 #
@@ -44,7 +44,7 @@ if self.verbose:
     print()
 ```
 
-无论你是什么操作系统，都建议建立虚拟环境。
+无论你是什么操作系统，都*建议*建立虚拟环境。
 
 具体操作方式参考[官方文档](https://docs.python.org/zh-cn/3.8/library/venv.html)，以下以 Ubuntu(bash) 为例。
 
