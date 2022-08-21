@@ -25,28 +25,28 @@ git clone https://github.com/tvwenger/maxfield
 cd maxfield
 ```
 
-maxfield 生成 GIF 图的效率底下，且实际使用中似乎很少会去看 GIF，所以我们简单修改一下源码。
+maxfield 生成 GIF 图的效率低下，且实际使用中似乎很少会去看 GIF，所以我们简单修改一下源码。
 
 在 `maxfield/results.py` 中拉到最底下，将如下部分注释掉。
 
 ```python
-        #
-        # Generate GIF
-        #
-        fname = os.path.join(self.outdir, 'plan_movie.gif')
-        with imageio.get_writer(fname, mode='I', duration=0.5) as writer:
-            for frame in frames:
-                image = imageio.imread(frame)
-                writer.append_data(image)
-        optimize(fname)
-        if self.verbose:
-            print("GIF saved to {0}".format(fname))
-            print()
+#
+# Generate GIF
+#
+fname = os.path.join(self.outdir, 'plan_movie.gif')
+with imageio.get_writer(fname, mode='I', duration=0.5) as writer:
+    for frame in frames:
+        image = imageio.imread(frame)
+        writer.append_data(image)
+optimize(fname)
+if self.verbose:
+    print("GIF saved to {0}".format(fname))
+    print()
 ```
 
 无论你是什么操作系统，都建议建立虚拟环境。
 
-具体操作方式参考[官方文档](https://docs.python.org/zh-cn/3.8/library/venv.html)，以下以 Ubuntu 为例。
+具体操作方式参考[官方文档](https://docs.python.org/zh-cn/3.8/library/venv.html)，以下以 Ubuntu(bash) 为例。
 
 ```
 sudo apt install python3.8-venv -y
@@ -54,31 +54,49 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-**参考**[项目文档](https://github.com/tvwenger/maxfield/blob/master/README.md#installation)安装 maxfield。
+参考[项目文档](https://github.com/tvwenger/maxfield/blob/master/README.md#installation)安装 maxfield。
 
 ```
+python3 setup.py install
+```
+
+我的 Windows 10(Powershell) 使用如下命令：
+
+```
+.\venv\Scripts\Activate.ps1
 python setup.py install
 ```
 
 # 准备数据集
 
-maxfield 需要规划区域内的所有 Portal 的信息。比较方便的方法是直接从 [Ingress Intel Map](https://intel.ingress.com/) 导出。
+maxfield 需要规划区域内的所有 Portal 的信息。一个方便的做法是直接从 [Ingress Intel Map](https://intel.ingress.com/) 导出。
 
 首先安装 IITC，见[文档](https://iitc.me/desktop/)。
 
 安装 [draw tools](https://static.iitc.me/build/release/plugins/draw-tools.user.js) 和 [Ingress IITC Portal Multi Export](https://github.com/modkin/Ingress-IITC-Multi-Export/raw/master/multi_export.user.js) 两个 IITC 插件。
 
-Intel Map 的网址已经更新，在 draw tools 的 `UserScript` 段内增加下面这行代码。
+Intel Map 的网址已经更新，将 draw tools 的 `UserScript` 段按如下修改。
 
 ```js
-// @match           http*://*intel.ingress.com/*
+// ==UserScript==
+// @id             iitc-plugin-draw-tools@breunigs
+// @name           IITC plugin: draw tools
+// @category       Layer
+// @version        0.7.0.20170108.21732
+// @namespace      https://github.com/jonatkins/ingress-intel-total-conversion
+// @updateURL      https://static.iitc.me/build/release/plugins/draw-tools.meta.js
+// @downloadURL    https://static.iitc.me/build/release/plugins/draw-tools.user.js
+// @description    [iitc-2017-01-08-021732] Allow drawing things onto the current map so you may plan your next move.
+// @match          http*://*intel.ingress.com/*
+// @grant          none
+// ==/UserScript==
 ```
 
 使用 draw tools 绘制多边形，如图。
 
 <img src="https://img-cdn.akass.cn/12/2022/08/6301c6dce0d21.png!wp">
 
-选择右侧 Multi Export 中 Polygon-Maxfield。
+选择右侧 Multi Export 中的 Polygon-Maxfield。
 
 <img src="https://img-cdn.akass.cn/12/2022/08/6301c77c0c699.png!wp">
 
@@ -114,13 +132,13 @@ python3 bin/maxfield-plan 1.txt -n 1 -c 0 -o test -v
 
 全部参数可以通过 `python3 bin/maxfield-plan -h` 获得帮助。
 
-跑的挺慢的，我的 E5-2680 v4 $\times$ 2 计算一个 28 Portals 大约花费 14s。而完成全部图片生成后总计花费约 50s。
+跑得挺慢的，我的 E5-2680 v4 $\times$ 2 计算一个 28 Portals 大约花费 14s。而完成全部图片生成后总计花费约 50s。
 
 因此你可以通过参数 `--skip_step_plots` 取消每步的图片生成。
 
 # 出门！
 
-至此你已经获得了拉这个完美 Field 所需的全部资料。
+至此你已经获得了拉完美 Field 所需的全部资料。
 
 - `frames` 文件夹中存放着每一步的参考；
 - `agent_*_assignment.txt` 写明了每位参与特工的 link 分配；
