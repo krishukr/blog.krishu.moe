@@ -66,6 +66,7 @@ python3 setup.py install
 
 ```
 .\venv\Scripts\Activate.ps1
+pip install numpy networkx scipy ortools matplotlib imageio pygifsicle
 python setup.py install
 ```
 
