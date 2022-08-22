@@ -18,6 +18,8 @@ Ingress 中赚取 AP 的最快方式是通过 Link 建立 Field。而[多重 Fie
 
 前天群友告诉我有个项目叫 maxfield，似乎本来是个 web 端应用，但现在打不开了。所幸后端是[开源](https://github.com/tvwenger/maxfield)的，我们可以自己跑。
 
+*upd: 现在[网页](https://www.ingress-maxfield.com/)好了，其数据格式是完全一样的，你可以继续看到准备数据集的部分。*
+
 首先 clone maxfield 的仓库。
 
 ```
