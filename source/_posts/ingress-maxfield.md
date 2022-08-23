@@ -27,25 +27,6 @@ git clone https://github.com/tvwenger/maxfield
 cd maxfield
 ```
 
-maxfield 生成 GIF 图的效率低下，且实际使用中似乎很少会去看 GIF，所以我们简单修改一下源码。
-
-在 `maxfield/results.py` 中拉到最底下，将如下部分**注释**掉。
-
-```python
-#
-# Generate GIF
-#
-fname = os.path.join(self.outdir, 'plan_movie.gif')
-with imageio.get_writer(fname, mode='I', duration=0.5) as writer:
-    for frame in frames:
-        image = imageio.imread(frame)
-        writer.append_data(image)
-optimize(fname)
-if self.verbose:
-    print("GIF saved to {0}".format(fname))
-    print()
-```
-
 无论你是什么操作系统，都*建议*建立虚拟环境。
 
 具体操作方式参考[官方文档](https://docs.python.org/zh-cn/3.8/library/venv.html)，以下以 Ubuntu(bash) 为例。
@@ -122,7 +103,7 @@ Select all 后复制到一个文本文档中。
 一个简单的例子：
 
 ```
-python3 bin/maxfield-plan 1.txt -n 1 -c 0 -o test -v
+python3 bin/maxfield-plan 1.txt -n 1 -c 0 -o test -v --skip_step_gif
 ```
 
 解释：
@@ -131,7 +112,8 @@ python3 bin/maxfield-plan 1.txt -n 1 -c 0 -o test -v
 - `-n 1` 单人完成；
 - `-c 0` 使用全核心计算；
 - `-o test` 输出到 `test` 文件夹；
-- `-v` 详细信息。
+- `-v` 详细信息；
+- `--skip_step_gif` 跳过 GIF 生成。GIF 通常用于社交媒体分享。
 
 全部参数可以通过 `python3 bin/maxfield-plan -h` 获得帮助。
 
