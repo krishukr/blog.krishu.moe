@@ -408,6 +408,13 @@ hexo-generator-category@^1.0.0:
   dependencies:
     hexo-pagination "1.0.0"
 
+hexo-generator-feed@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/hexo-generator-feed/-/hexo-generator-feed-3.0.0.tgz#4126ef5e308264c42599fb0efdaf88ed11fa599e"
+  dependencies:
+    hexo-util "^2.1.0"
+    nunjucks "^3.0.0"
+
 hexo-generator-index@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/hexo-generator-index/-/hexo-generator-index-2.0.0.tgz"
@@ -435,9 +442,9 @@ hexo-i18n@^1.0.0:
   dependencies:
     sprintf-js "^1.0.3"
 
-hexo-lazyload-image@^1.0.10:
-  version "1.0.10"
-  resolved "https://registry.npmjs.org/hexo-lazyload-image/-/hexo-lazyload-image-1.0.10.tgz"
+hexo-lazyload-image@^1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/hexo-lazyload-image/-/hexo-lazyload-image-1.0.12.tgz#b5df417c0c4507c3ad0476619ca6513178fea252"
   dependencies:
     uglify-js "^3.0.27"
 
@@ -753,7 +760,7 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/normalize-path/-/normalize-path-3.0.0.tgz"
 
-nunjucks@^3.1.6, nunjucks@^3.2.3:
+nunjucks@^3.0.0, nunjucks@^3.1.6, nunjucks@^3.2.3:
   version "3.2.3"
   resolved "https://registry.npmjs.org/nunjucks/-/nunjucks-3.2.3.tgz"
   dependencies:
