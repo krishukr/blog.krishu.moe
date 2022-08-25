@@ -48,9 +48,11 @@ network:
   version: 2
 ```
 
+`sudo netplan apply` 应用更改。
+
 # 修改主机名
 
-`hostnamectl set-hostname your-hostname`。
+`sudo hostnamectl set-hostname your-hostname`。
 
 # 存储扩容
 
