@@ -389,11 +389,11 @@ hexo-fs@^3.0.1, hexo-fs@^3.1.0:
     graceful-fs "^4.1.11"
     hexo-util "^2.0.0"
 
-hexo-generator-archive@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/hexo-generator-archive/-/hexo-generator-archive-1.0.0.tgz"
+hexo-generator-archive@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/hexo-generator-archive/-/hexo-generator-archive-2.0.0.tgz#bd93f17848843bb5bface81103d81f5be1a8b2c9"
   dependencies:
-    hexo-pagination "1.0.0"
+    hexo-pagination "3.0.0"
 
 hexo-generator-category@^2.0.0:
   version "2.0.0"
@@ -408,12 +408,11 @@ hexo-generator-feed@^3.0.0:
     hexo-util "^2.1.0"
     nunjucks "^3.0.0"
 
-hexo-generator-index@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/hexo-generator-index/-/hexo-generator-index-2.0.0.tgz"
+hexo-generator-index@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/hexo-generator-index/-/hexo-generator-index-3.0.0.tgz#4c9233731e027a6af6491886a4aafe08ffdaffe0"
   dependencies:
-    hexo-pagination "1.0.0"
-    timsort "^0.3.0"
+    hexo-pagination "3.0.0"
 
 hexo-generator-sitemap@^3.0.1:
   version "3.0.1"
@@ -423,11 +422,11 @@ hexo-generator-sitemap@^3.0.1:
     micromatch "^4.0.2"
     nunjucks "^3.1.6"
 
-hexo-generator-tag@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/hexo-generator-tag/-/hexo-generator-tag-1.0.0.tgz"
+hexo-generator-tag@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/hexo-generator-tag/-/hexo-generator-tag-2.0.0.tgz#f5a18c92b2f28063a76008b4090a7cea81fbbcc0"
   dependencies:
-    hexo-pagination "1.0.0"
+    hexo-pagination "3.0.0"
 
 hexo-i18n@^1.0.0:
   version "1.0.0"
@@ -452,10 +451,6 @@ hexo-log@^3.0.0, hexo-log@^3.2.0:
   resolved "https://registry.yarnpkg.com/hexo-log/-/hexo-log-3.2.0.tgz#958c8ea681f7575afcd554f39c8e09f46461d317"
   dependencies:
     picocolors "^1.0.0"
-
-hexo-pagination@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/hexo-pagination/-/hexo-pagination-1.0.0.tgz"
 
 hexo-pagination@3.0.0:
   version "3.0.0"
@@ -996,10 +991,6 @@ through2@^4.0.2:
 tildify@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/tildify/-/tildify-2.0.0.tgz"
-
-timsort@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.npmjs.org/timsort/-/timsort-0.3.0.tgz"
 
 titlecase@^1.1.3:
   version "1.1.3"
