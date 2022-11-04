@@ -247,7 +247,7 @@ double read() {
 
 即是 $$ sa_r - k sb_r - \min_{0 \le l < r}{\left( k sb_l - sa_l \right)} $$
 
-注意到 $k sb_l - sa_l$ 是一次函数的形式，因此用李超树维护即可。
+注意到 $sb_l k - sa_l$ 是一次函数的形式，因此用李超树维护即可。
 
 ```cpp
 #include <algorithm>
