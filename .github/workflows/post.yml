@@ -2,7 +2,7 @@ name: Preview
 
 on: 
   push:
-    branches: [ post ] 
+    branches-ignore: [ master ] 
 
 jobs:
   build:
