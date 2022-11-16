@@ -12,24 +12,27 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      
+
       - name: Setup Node.JS
         uses: actions/setup-node@v3
         with:
           node-version: 14
-          
+
       - name: Install hexo-cli
         run: npm install -g hexo-cli
-        
+
       - name: Install Node Packages
         run: yarn
-        
+
+      - name: Install pandoc
+        run: sudo apt install -y pandoc
+
       - name: Restore File Updated Time
         run: git ls-files -z | while read -d '' path; do touch -d "$(git log -1 --format="@%ct" "$path")" "$path"; done
 
       - name: Generate Files
         run: hexo g
-        
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1.1.0
         with:
