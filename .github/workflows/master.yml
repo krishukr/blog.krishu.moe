@@ -1,0 +1,40 @@
+name: Production
+
+on: 
+  push:
+    branches: [ master ] 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          
+      - name: Install hexo-cli
+        run: npm install -g hexo-cli
+        
+      - name: Install Node Packages
+        run: yarn
+        
+      - name: Restore File Updated Time
+        run: git ls-files -z | while read -d '' path; do touch -d "$(git log -1 --format="@%ct" "$path")" "$path"; done
+
+      - name: Generate Files
+        run: hexo g
+        
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: e40ca42475e880f2bb8fef31bc321e4c
+          projectName: blog-krishu-moe
+          directory: public
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
