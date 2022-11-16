@@ -44,3 +44,4 @@ jobs:
           projectName: blog-krishu-moe
           directory: public
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
