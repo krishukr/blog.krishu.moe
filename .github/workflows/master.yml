@@ -31,7 +31,7 @@ jobs:
         run: hexo g
         
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/pages-action@v1.1.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: e40ca42475e880f2bb8fef31bc321e4c
