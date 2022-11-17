@@ -1,8 +1,6 @@
-name: Production
+name: Build
 
-on: 
-  push:
-    branches: [ master ] 
+on: [ push ]
 
 jobs:
   build:
@@ -22,9 +20,6 @@ jobs:
           node-version: 16
           cache: 'yarn'
 
-      - name: Install hexo-cli
-        run: npm install -g hexo-cli
-
       - name: Install Node Packages
         run: yarn
 
@@ -38,9 +33,10 @@ jobs:
         run: git ls-files -z | while read -d '' path; do touch -d "$(git log -1 --format="@%ct" "$path")" "$path"; done
 
       - name: Generate Files
-        run: hexo g
+        run: ./node_modules/.bin/hexo g
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Pages Productive
+        if: github.ref == 'refs/heads/master'
         uses: cloudflare/pages-action@v1.1.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -49,3 +45,14 @@ jobs:
           directory: public
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
+
+      - name: Deploy to Cloudflare Pages Previewing
+        if: github.ref != 'refs/heads/master'
+        uses: cloudflare/pages-action@v1.1.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: e40ca42475e880f2bb8fef31bc321e4c
+          projectName: blog-krishu-moe
+          directory: public
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
