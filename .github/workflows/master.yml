@@ -31,6 +31,7 @@ jobs:
 
       - name: Restore File Updated Time
         run: git ls-files -z | while read -d '' path; do touch -d "$(git log -1 --format="@%ct" "$path")" "$path"; done
+        working-directory: ./source
 
       - name: Generate Files
         run: ./node_modules/.bin/hexo g
