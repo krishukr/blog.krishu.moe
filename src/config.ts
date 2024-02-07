@@ -9,7 +9,6 @@ export const SITE: Site = {
   lightAndDarkMode: true,
   postPerPage: 3,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
-  startYear: 2021,
 };
 
 export const LOCALE = {

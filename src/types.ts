@@ -9,7 +9,6 @@ export type Site = {
   lightAndDarkMode: boolean;
   postPerPage: number;
   scheduledPostMargin: number;
-  startYear: number;
 };
 
 export type SocialObjects = {

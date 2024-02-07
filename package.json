@@ -17,8 +17,10 @@
   "dependencies": {
     "@astrojs/check": "^0.4.1",
     "@astrojs/rss": "^4.0.2",
+    "@iconify-json/mdi": "^1.1.64",
     "@resvg/resvg-js": "^2.6.0",
     "astro": "^4.2.1",
+    "astro-icon": "^1.1.0",
     "fuse.js": "^7.0.0",
     "github-slugger": "^2.0.0",
     "rehype-katex": "^7.0.0",
