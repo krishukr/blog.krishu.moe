@@ -3,7 +3,7 @@ import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "@layouts/Layout.astro";
-import Card from "./components/Card.astro";
+import Card from "./_components/Card.astro";
 import PrettyLink from "@components/PrettyLink.astro";
 import Socials from "@components/Socials.astro";
 import { SITE, SOCIALS } from "@config";
@@ -21,7 +21,7 @@ const title = "About Me";
   <main id="main-content">
     <section
       id="about"
-      class="prose mb-28 max-w-3xl prose-img:border-0 text-skin-base"
+      class="prose mb-28 max-w-3xl text-skin-base prose-img:border-0"
     >
       <h1 class="text-2xl tracking-wider sm:text-3xl">{title}</h1>
       <Intro />

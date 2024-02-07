@@ -17,7 +17,7 @@ type Friend = {
 };
 
 const friends: Friend[] = YAML.parse(
-  readFileSync("./src/pages/friends/links.yml", "utf-8")
+  readFileSync("./src/pages/friends/_links.yml", "utf-8")
 ) as Friend[];
 ---
 
