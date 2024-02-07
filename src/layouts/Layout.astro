@@ -119,5 +119,10 @@ const socialImageURL = new URL(
   </head>
   <body>
     <slot />
+    <style>
+      :global(details) {
+        @apply w-full;
+      }
+    </style>
   </body>
 </html>
