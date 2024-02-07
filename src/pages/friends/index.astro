@@ -34,7 +34,7 @@ const friends: Friend[] = YAML.parse(
                 height="96"
                 src={f.avatar}
                 class="friend-avatar"
-                aria-hidden="true"
+                alt={`icon of ${f.name}`}
               />
               <div class="friend-text-wrapper">
                 <h2 class="friend-name">{f.name}</h2>
