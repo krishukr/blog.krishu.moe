@@ -51,7 +51,7 @@ const friends: Friend[] = YAML.parse(
 
 <style>
   .friend-list {
-    @apply grid grid-cols-1 gap-2 sm:grid-cols-2;
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
   }
 
   .friend-list .friend-wrapper {
@@ -59,7 +59,7 @@ const friends: Friend[] = YAML.parse(
   }
 
   .friend-list .friend-text-wrapper {
-    @apply px-4;
+    @apply pl-4;
   }
 
   .friend-list .friend-name {
@@ -71,6 +71,6 @@ const friends: Friend[] = YAML.parse(
   }
 
   .friend-list .friend-avatar {
-    @apply rounded-full;
+    @apply size-24 rounded-full;
   }
 </style>
