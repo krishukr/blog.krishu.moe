@@ -1,0 +1,76 @@
+---
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Layout from "@layouts/Layout.astro";
+import { SITE } from "@config";
+import Main from "@layouts/Main.astro";
+import LinkButton from "@components/LinkButton.astro";
+
+import YAML from "yaml";
+import { readFileSync } from "fs";
+
+type Friend = {
+  name: string;
+  avatar: string;
+  site: string;
+  info: string;
+};
+
+const friends: Friend[] = YAML.parse(
+  readFileSync("./src/pages/friends/links.yml", "utf-8")
+) as Friend[];
+---
+
+<Layout title={`Friends | ${SITE.title}`}>
+  <Header activeNav="friends" />
+  <Main pageTitle="Friends" pageDesc="Links to my friends.">
+    <div class="friend-list">
+      {
+        friends.map(f => (
+          <LinkButton href={f.site}>
+            <div class="friend-wrapper">
+              <img
+                width="96"
+                height="96"
+                src={f.avatar}
+                class="friend-avatar"
+                aria-hidden="true"
+              />
+              <div class="friend-text-wrapper">
+                <h2 class="friend-name">{f.name}</h2>
+                <p class="friend-info">{f.info}</p>
+              </div>
+            </div>
+          </LinkButton>
+        ))
+      }
+    </div>
+  </Main>
+  <Footer />
+</Layout>
+
+<style>
+  .friend-list {
+    @apply grid grid-cols-1 gap-2 sm:grid-cols-2;
+  }
+
+  .friend-list .friend-wrapper {
+    @apply flex flex-auto;
+  }
+
+  .friend-list .friend-text-wrapper {
+    @apply px-4;
+  }
+
+  .friend-list .friend-name {
+    @apply text-lg font-medium text-skin-accent decoration-dashed underline-offset-4 hover:underline;
+  }
+
+  .friend-list .friend-info {
+    @apply text-sm opacity-80;
+  }
+
+  .friend-list .friend-avatar {
+    @apply rounded-full;
+  }
+</style>
