@@ -6,7 +6,7 @@ import Layout from "@layouts/Layout.astro";
 import Card from "./components/Card.astro";
 import PrettyLink from "@components/PrettyLink.astro";
 import Socials from "@components/Socials.astro";
-import { SOCIALS } from "@config";
+import { SITE, SOCIALS } from "@config";
 
 import { Content as Intro } from "./intro.md";
 
@@ -15,7 +15,7 @@ const socialCount = SOCIALS.filter(social => social.active).length;
 const title = "About Me";
 ---
 
-<Layout title={title}>
+<Layout title=`${title} | ${SITE.title}`>
   <Header activeNav="about" />
   <Breadcrumbs />
   <main id="main-content">
