@@ -1,4 +1,3 @@
-import { SITE } from "@config";
 import type { CollectionEntry } from "astro:content";
 
 export default (post: CollectionEntry<"blog">) => {
@@ -58,6 +57,7 @@ export default (post: CollectionEntry<"blog">) => {
               fontWeight: "bold",
               maxHeight: "84%",
               overflow: "hidden",
+              fontFamily: '"IBM Plex Mono", "Source Han Sans"',
             }}
           >
             {post.data.title}
@@ -84,10 +84,6 @@ export default (post: CollectionEntry<"blog">) => {
                 {post.data.author}
               </span>
             </span>
-
-            {/* <span style={{ overflow: "hidden", fontWeight: "bold" }}>
-              {SITE.title}
-            </span> */}
           </div>
         </div>
       </div>

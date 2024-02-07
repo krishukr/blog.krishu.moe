@@ -17,10 +17,15 @@ const fetchFonts = async () => {
   );
   const fontBold: ArrayBuffer = await fontFileBold.arrayBuffer();
 
-  return { fontRegular, fontBold };
+  const fontFileSHS = await fetch(
+    "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/release/OTF/SimplifiedChinese/SourceHanSansSC-Bold.otf"
+  );
+  const fontSHS: ArrayBuffer = await fontFileSHS.arrayBuffer();
+
+  return { fontRegular, fontBold, fontSHS };
 };
 
-const { fontRegular, fontBold } = await fetchFonts();
+const { fontRegular, fontBold, fontSHS } = await fetchFonts();
 
 const options: SatoriOptions = {
   width: 1200,
@@ -38,6 +43,11 @@ const options: SatoriOptions = {
       data: fontBold,
       weight: 600,
       style: "normal",
+    },
+    {
+      name: "Source Han Sans",
+      data: fontSHS,
+      weight: 600,
     },
   ],
 };
