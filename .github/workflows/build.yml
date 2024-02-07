@@ -1,0 +1,48 @@
+name: Build
+
+on: [ push: branches: [master, post], workflow_dispatch ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.JS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'yarn'
+
+      - name: Install Node Packages
+        run: yarn
+
+      - name: Genereate static website files
+        run: yarn build
+
+      - name: Deploy to Cloudflare Pages Production
+        if: github.ref == 'refs/heads/master'
+        uses: cloudflare/pages-action@v1.1.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: e40ca42475e880f2bb8fef31bc321e4c
+          projectName: blog-krishu-moe
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: Deploy to Cloudflare Pages Preview
+        if: github.ref != 'refs/heads/master'
+        uses: cloudflare/pages-action@v1.1.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: e40ca42475e880f2bb8fef31bc321e4c
+          projectName: blog-krishu-moe
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}
