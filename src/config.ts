@@ -51,15 +51,15 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "Mail",
-    href: "mailto:yourmail@gmail.com",
-    linkTitle: `Send an email to ${SITE.title}`,
-    active: false,
+    href: "mailto:noble.flame6002@fastmail.com",
+    linkTitle: `Send an email to me`,
+    active: true,
   },
   {
     name: "Twitter",
-    href: "https://github.com/satnaing/astro-paper",
-    linkTitle: `${SITE.title} on Twitter`,
-    active: false,
+    href: "https://twitter.com/Kris_hukr",
+    linkTitle: `Me on Twitter`,
+    active: true,
   },
   {
     name: "Twitch",
@@ -69,9 +69,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "YouTube",
-    href: "https://github.com/satnaing/astro-paper",
-    linkTitle: `${SITE.title} on YouTube`,
-    active: false,
+    href: "https://www.youtube.com/@Kris_hukr",
+    linkTitle: `My channel on YouTube`,
+    active: true,
   },
   {
     name: "WhatsApp",
@@ -135,9 +135,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "Telegram",
-    href: "https://github.com/satnaing/astro-paper",
-    linkTitle: `${SITE.title} on Telegram`,
-    active: false,
+    href: "https://t.me/Kris_hukr",
+    linkTitle: `Contact me on Telegram`,
+    active: true,
   },
   {
     name: "Mastodon",
