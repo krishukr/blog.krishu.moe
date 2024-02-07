@@ -1,0 +1,56 @@
+---
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import Footer from "@components/Footer.astro";
+import Header from "@components/Header.astro";
+import Layout from "@layouts/Layout.astro";
+import Card from "./components/Card.astro";
+import PrettyLink from "@components/PrettyLink.astro";
+
+import { Content as Intro } from "./intro.md";
+
+const title = "About Me";
+---
+
+<Layout title={title}>
+  <Header activeNav="about" />
+  <Breadcrumbs />
+  <main id="main-content">
+    <section id="about" class="prose mb-28 max-w-3xl prose-img:border-0">
+      <h1 class="text-2xl tracking-wider sm:text-3xl">{title}</h1>
+      <Intro />
+
+      <h2>I was educated in</h2>
+      <Card
+        contents={[
+          { text: "Senior high school", time: "2023-present" },
+          { text: "Junior high school", time: "2019-2023" },
+        ]}>Shenzhen Foreign Language School</Card
+      >
+
+      <h2>I participated in</h2>
+      <Card contents={[{ text: "Vice Director", time: "2023-present" }]}
+        ><PrettyLink href="https://sflsgeek.com/" className="font-semibold"
+          >Geek Club</PrettyLink
+        ></Card
+      >
+
+      <h2>I did</h2>
+      <Card contents={[{ text: "Author", time: "2023-2024" }]}
+        ><PrettyLink
+          href="https://github.com/krishukr/telegram-cjk-search-bot"
+          className="font-semibold">Telegram CJK Search Bot</PrettyLink
+        ></Card
+      >
+      <Card contents={[{ text: "Builder & Maintainer", time: "2022-present" }]}
+        >HomeLab</Card
+      >
+      <Card contents={[{ text: "Contributor", time: "2024" }]}
+        ><PrettyLink
+          href="https://github.com/project-trans/MtF-wiki"
+          className="font-semibold">MtF.wiki</PrettyLink
+        ></Card
+      >
+    </section>
+  </main>
+  <Footer />
+</Layout>

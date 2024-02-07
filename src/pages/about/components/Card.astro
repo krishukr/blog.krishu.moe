@@ -1,0 +1,38 @@
+---
+export interface Content {
+  text: string;
+  time: string;
+}
+
+export interface Props {
+  contents: Content[];
+}
+
+const { contents } = Astro.props;
+---
+
+<h3><slot /></h3>
+<div class="card-lines-wrapper">
+  {
+    contents.map(({ text, time }) => (
+      <div class="line-wrapper">
+        <p>{text}</p>
+        <p>{time}</p>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .card-lines-wrapper {
+    @apply flex flex-col;
+  }
+
+  .card-lines-wrapper .line-wrapper {
+    @apply flex flex-row justify-between;
+  }
+
+  .card-lines-wrapper p {
+    @apply my-0 opacity-70;
+  }
+</style>
