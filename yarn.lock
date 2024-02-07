@@ -49,10 +49,10 @@
   resolved "https://registry.npmjs.org/@astrojs/compiler/-/compiler-1.8.2.tgz"
   integrity sha512-o/ObKgtMzl8SlpIdzaxFnt7SATKPxu4oIP/1NL+HDJRzxfJcAkOTAb/ZKMRyULbz4q+1t2/DAebs2Z1QairkZw==
 
-"@astrojs/compiler@^2.0.0", "@astrojs/compiler@^2.4.0", "@astrojs/compiler@^2.5.0":
-  version "2.5.2"
-  resolved "https://registry.npmjs.org/@astrojs/compiler/-/compiler-2.5.2.tgz"
-  integrity sha512-fm9HNYu1tVnJjZYHE+SdDM5k6fZKNPXS9PwT43Mf6l4HVGx8d1jQwhGQqCvLkYJJBwQ9OysiexFMt7wtNuXhmQ==
+"@astrojs/compiler@^2.0.0", "@astrojs/compiler@^2.4.0", "@astrojs/compiler@^2.5.3":
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/@astrojs/compiler/-/compiler-2.5.3.tgz#eb34fa21cbd395f2b5493aa06d91dd9e9faf3bc2"
+  integrity sha512-jzj01BRv/fmo+9Mr2FhocywGzEYiyiP2GVHje1ziGNU6c97kwhYGsnvwMkHrncAy9T9Vi54cjaMK7UE4ClX4vA==
 
 "@astrojs/internal-helpers@0.2.1":
   version "0.2.1"
@@ -1646,12 +1646,12 @@ astro-icon@^1.1.0:
     "@iconify/types" "^2.0.0"
     "@iconify/utils" "^2.1.5"
 
-astro@^4.2.1:
-  version "4.3.2"
-  resolved "https://registry.npmjs.org/astro/-/astro-4.3.2.tgz"
-  integrity sha512-SJotHzKG/I32ruYWItMRJjtmNQh14mVS7kahu3XfYyxvo6nx08PGJBTSPbqPrW1sjeQPHwcpVDFx3yMMK2kaxQ==
+astro@^4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/astro/-/astro-4.3.4.tgz#8857d3015552b2be412899c8ee9b045c29019655"
+  integrity sha512-BWzGGn/PuwmT0DWX+yXa/jUq99e85AGh9/C5IFAKIfp22Nk88dOfX89RoqKBWPPp2BrK2vsdCFd0WUv8XJh80w==
   dependencies:
-    "@astrojs/compiler" "^2.5.0"
+    "@astrojs/compiler" "^2.5.3"
     "@astrojs/internal-helpers" "0.2.1"
     "@astrojs/markdown-remark" "4.2.1"
     "@astrojs/telemetry" "3.0.4"
