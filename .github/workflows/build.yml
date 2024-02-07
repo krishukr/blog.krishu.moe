@@ -1,6 +1,11 @@
 name: Build
 
-on: [ push: branches: [master, post], workflow_dispatch ]
+on:
+  push:
+    branches:
+      - master
+      - post
+  workflow_dispatch:
 
 jobs:
   build:

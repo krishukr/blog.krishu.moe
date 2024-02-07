@@ -26,7 +26,7 @@ jobs:
         run: yarn build
 
       - name: Deploy to Cloudflare Pages Preview
-        if: github.ref != 'refs/heads/master' and github.ref != 'refs/heads/post'
+        if: github.ref != 'refs/heads/master' && github.ref != 'refs/heads/post'
         uses: cloudflare/pages-action@v1.1.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
