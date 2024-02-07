@@ -12,23 +12,17 @@ jobs:
       - name: Setup Node.JS
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
           cache: 'yarn'
 
       - name: Install Node Packages
         run: yarn
 
-      - name: Install pandoc
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: pandoc
-          version: 1.0
-
       - name: Generate Files
-        run: ./node_modules/.bin/hexo g
+        run: yarn build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: public
-          path: public/
+          name: dist
+          path: dist/
