@@ -38,4 +38,4 @@ jobs:
           projectName: blog-krishu-moe
           directory: dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          branch: pr/${{ github.base_ref }}
+          branch: pr/${{ github.head_ref }}
