@@ -35,7 +35,7 @@ jobs:
 
       - name: Deploy to Cloudflare Pages Production
         if: github.ref == 'refs/heads/master'
-        uses: cloudflare/pages-action@v1.1.0
+        uses: cloudflare/pages-action@v1.5.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: e40ca42475e880f2bb8fef31bc321e4c
@@ -46,7 +46,7 @@ jobs:
 
       - name: Deploy to Cloudflare Pages Preview
         if: github.ref != 'refs/heads/master'
-        uses: cloudflare/pages-action@v1.1.0
+        uses: cloudflare/pages-action@v1.5.0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: e40ca42475e880f2bb8fef31bc321e4c
