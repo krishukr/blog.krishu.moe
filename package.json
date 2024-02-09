@@ -34,7 +34,7 @@
     "yaml": "^2.3.4"
   },
   "devDependencies": {
-    "@astrojs/react": "^3.0.9",
+    "@astrojs/react": "^3.0.10",
     "@astrojs/sitemap": "^3.0.5",
     "@astrojs/tailwind": "^5.1.0",
     "@divriots/jampack": "^0.23.2",
