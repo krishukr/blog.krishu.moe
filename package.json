@@ -15,7 +15,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@astrojs/check": "^0.5.0",
+    "@astrojs/check": "^0.5.2",
     "@astrojs/rss": "^4.0.5",
     "@iconify-json/mdi": "^1.1.64",
     "@resvg/resvg-js": "^2.6.0",
