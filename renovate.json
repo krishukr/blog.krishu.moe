@@ -7,7 +7,12 @@
   "packageRules": [
     {
       "groupName": "Patch Updates",
-      "matchUpdateTypes": ["patch"]
+      "matchUpdateTypes": [
+        "patch"
+      ]
     }
+  ],
+  "baseBranches": [
+    "post"
   ]
 }
