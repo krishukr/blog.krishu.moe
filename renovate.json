@@ -14,5 +14,9 @@
   ],
   "baseBranches": [
     "post"
+  ],
+  "timezone": "Asia/Shanghai",
+  "schedule": [
+    "every weekend"
   ]
 }
