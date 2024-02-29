@@ -982,7 +982,7 @@ void read(T& t, Args&... rest) {
 
 碍于笔者能力所限，还有一些手法无法很好地阐述，还有**可持久化 Trie** 也没有讲。
 
-如果你对本文内容有指正或者疑问，欢迎[邮件](mailto:lease-swat.0r@icloud.com)联系我。
+如果你对本文内容有指正或者疑问，欢迎[邮件](mailto:noble.flame6002@fastmail.com)联系我。
 
 祝你学业进步。
 
