@@ -22,16 +22,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install Node Packages
-        run: yarn
-
-      - name: Adhoc solution for package sharp
-        run: yarn add sharp --ignore-engines
+        run: npm install
 
       - name: Genereate static website files
-        run: yarn build
+        run: npm run build
 
       - name: Deploy to Cloudflare Pages Preview
         uses: cloudflare/pages-action@v1.5.0

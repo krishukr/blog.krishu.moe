@@ -13,13 +13,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install Node Packages
-        run: yarn
-
-      - name: Adhoc solution for package sharp
-        run: yarn add sharp --ignore-engines
+        run: npm install
 
       - name: Astro check
-        run: yarn astro check
+        run: npm run astro check
