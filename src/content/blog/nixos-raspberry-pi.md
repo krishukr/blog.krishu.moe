@@ -1,6 +1,6 @@
 ---
 author: Kris Hu
-pubDatetime: 2024-04-14T16:36:10.000+08:00
+pubDatetime: 2024-04-14T17:01:27.000+08:00
 modDatetime:
 title: Installing headless NixOS on Raspberry Pi
 featured: true
@@ -24,6 +24,8 @@ OK, it's true that I had to use a monitor to debug during my installation. But s
 - Headless NixOS - i.e. no monitor or keyboard is needed to be connected on Raspberry Pi during the whole installation.
 - tmpfs as root
 - btrfs as persistence
+
+<img src="https://img-cdn.akass.cn/12/2024/04/661b9ab68ccc7.png!wp" alt="A neofetch screenshot showing a NixOS running on Raspberry Pi 4 Model B"/>
 
 ## Requirements
 
