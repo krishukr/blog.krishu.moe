@@ -1,9 +1,9 @@
 ---
 author: Kris Hu
-pubDatetime: 2024-04-14T12:06:47.000+08:00
+pubDatetime: 2024-04-14T16:23:05.000+08:00
 modDatetime:
 title: Installing headless NixOS on Raspberry Pi
-featured: false
+featured: true
 draft: false
 tags:
   - NixOS
@@ -13,7 +13,7 @@ tags:
 description: Installing NixOS on Raspberry Pi without monitor and keyboard.
 ---
 
-OK, it's true that I had to use a monitor to debug during my installation. But since I figured out all those puzzles, you _might_ be able to do this with USB drives and an Ethernet cable.
+OK, it's true that I had to use a monitor to debug during my installation. But since I figured out all those puzzles, you _might_ be able to do this with USB drives and an Ethernet cable only.
 
 **TL;DR:** Build a customized NixOS image with ssh as an installer.
 
@@ -181,7 +181,7 @@ For `fileSystems` part, do refer to the [Partition](#partition) part below. Refe
 
 ## Install NixOS on Raspberry Pi
 
-First, `sudo poweroff` your Raspberry Pi. Then plug in the USB drive, don't forget to plugin an Ethernet cabel also. And plug in the power cabel to boot up. You will need to wait for minutes for the filesystem to be cleand up during the first boot of this installer. Finally you should see your Raspberry Pi on your network 🥳
+First, `sudo poweroff` your Raspberry Pi. Then plug in the USB drive, don't forget to plugin an Ethernet cable also. And plug in the power cable to boot up. You will need to wait for minutes for the filesystem to be cleand up during the first boot of this installer. Finally you should see your Raspberry Pi on your network 🥳
 
 Once you find it, simply `ssh` to it to perform the following installation.
 
@@ -264,7 +264,7 @@ cp /firmware/* /mnt/boot
 
 ### Reboot into new NixOS
 
-You are all set! Now `poweroff` the Raspberry Pi, disconnect the installer USB drive, and reconnect the power cabel. It should boot up into the newly installed NixOS very quickly.
+You are all set! Now `poweroff` the Raspberry Pi, disconnect the installer USB drive, and reconnect the power cable. It should boot up into the newly installed NixOS very quickly.
 
 ## Bonus: extra configuration of NixOS on Raspberry Pi
 
