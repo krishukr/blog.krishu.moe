@@ -1,6 +1,6 @@
 ---
 author: Kris Hu
-pubDatetime: 2024-04-14T16:23:05.000+08:00
+pubDatetime: 2024-04-14T16:36:10.000+08:00
 modDatetime:
 title: Installing headless NixOS on Raspberry Pi
 featured: true
@@ -27,14 +27,14 @@ OK, it's true that I had to use a monitor to debug during my installation. But s
 
 ## Requirements
 
-- Raspberry Pi 3/4 - these two are mainline supported [^1]
+- Raspberry Pi 3/4 - these two are mainline supported. [^1] I am using Raspberry Pi 4, but the installation should work on rpi3 as well 🤔
 - A SD card with officical [Raspberry Pi OS](https://www.raspberrypi.com/software/) installed
-- A USB drive - make sure no important data on it because we need to wipe it completely
+- A USB drive - make sure there is no important data on it because we need to wipe it completely
 - _optional:_ An external USB SSD
 
 ## Setup booting from USB on Raspberry Pi
 
-First of all, we need to update firmwares on Raspberry Pi to make booting from USB feasible. [^2]
+First of all, we need to update the firmware on the Raspberry Pi to make booting from USB feasible. [^2]
 
 1. Run `sudo rpi-eeprom-update -a` on Raspberry Pi OS and reboot. We need a version of 2020 Sep 03 or later.
 2. Run `sudo -E rpi-eeprom-config --edit` and edit `BOOT_ORDER=0xf14`. Where
@@ -181,11 +181,11 @@ For `fileSystems` part, do refer to the [Partition](#partition) part below. Refe
 
 ## Install NixOS on Raspberry Pi
 
-First, `sudo poweroff` your Raspberry Pi. Then plug in the USB drive, don't forget to plugin an Ethernet cable also. And plug in the power cable to boot up. You will need to wait for minutes for the filesystem to be cleand up during the first boot of this installer. Finally you should see your Raspberry Pi on your network 🥳
+First, `sudo poweroff` your Raspberry Pi. Then plug in the USB drive, don't forget to plug in an Ethernet cable also. And plug in the power cable to boot up. You will need to wait for minutes for the filesystem to be cleand up during the first boot of this installer. Finally you should see your Raspberry Pi on your network 🥳
 
 Once you find it, simply `ssh` to it to perform the following installation.
 
-In my configuration, `/dev/sda` is the installer, and `/dev/sdb` is a USB M.2 SSD as my installation target. It may be different in your situation, for example `/dev/mmcblk0` if you want to install to SD card, so please do adapt to your version of the following commands.
+In my configuration, `/dev/sda` is the installer, and `/dev/sdb` is a USB M.2 SSD as my installation target. It may be different in your situation, for example `/dev/mmcblk0` if you want to install to SD card, so please adapt the following commands to your version.
 
 ### Partition
 
