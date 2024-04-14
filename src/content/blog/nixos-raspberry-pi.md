@@ -13,6 +13,8 @@ tags:
 description: Installing NixOS on Raspberry Pi without monitor and keyboard.
 ---
 
+简体中文：https://blog.chs.pub/p/24-07-nixosraspberrypi/
+
 OK, it's true that I had to use a monitor to debug during my installation. But since I figured out all those puzzles, you _might_ be able to do this with USB drives and an Ethernet cable only.
 
 **TL;DR:** Build a customized NixOS image with ssh as an installer.
