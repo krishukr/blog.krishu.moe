@@ -1,0 +1,334 @@
+---
+author: Kris Hu
+pubDatetime: 2024-04-14T12:06:47.000+08:00
+modDatetime:
+title: Installing headless NixOS on Raspberry Pi
+featured: false
+draft: false
+tags:
+  - NixOS
+  - Raspberry Pi
+  - Linux
+  - How to
+description: Installing NixOS on Raspberry Pi without monitor and keyboard.
+---
+
+OK, it's true that I had to use a monitor to debug during my installation. But since I figured out all those puzzles, you _might_ be able to do this with USB drives and an Ethernet cable.
+
+**TL;DR:** Build a customized NixOS image with ssh as an installer.
+
+## Table of contents
+
+## Highlights
+
+- Headless NixOS - i.e. no monitor or keyboard is needed to be connected on Raspberry Pi during the whole installation.
+- tmpfs as root
+- btrfs as persistence
+
+## Requirements
+
+- Raspberry Pi 3/4 - these two are mainline supported [^1]
+- A SD card with officical [Raspberry Pi OS](https://www.raspberrypi.com/software/) installed
+- A USB drive - make sure no important data on it because we need to wipe it completely
+- _optional:_ An external USB SSD
+
+## Setup booting from USB on Raspberry Pi
+
+First of all, we need to update firmwares on Raspberry Pi to make booting from USB feasible. [^2]
+
+1. Run `sudo rpi-eeprom-update -a` on Raspberry Pi OS and reboot. We need a version of 2020 Sep 03 or later.
+2. Run `sudo -E rpi-eeprom-config --edit` and edit `BOOT_ORDER=0xf14`. Where
+
+- Read from right to left
+- `4` = Check USB drive
+- `1` = Check SD card
+- `f` = Start again
+
+3. `sudo reboot` to apply all changes.
+
+## Build installer NixOS image
+
+At this time (2024 Apr 12) none of the offical Hydra-built SD images of [23.11](https://hydra.nixos.org/build/255995738), [unstable](https://hydra.nixos.org/build/255888156), or [unstable with latest kernel](https://hydra.nixos.org/build/255879744) will boot successfully on Raspberry Pi. All you will get is 2 long flashes following by 2 short flashes, and nothing will happen. So anyway you need to build a customzied image using [linux_rpi4](https://search.nixos.org/packages?channel=23.11&show=linuxKernel.kernels.linux_rpi4&from=0&size=50&sort=relevance&type=packages&query=linux_rpi4) [^3].
+
+Here's the most important part of `hosts/nixos-pi-installer/default.nix`: [^4]
+
+```nix
+{ config, lib, pkgs, inputs, outputs, modulesPath, ... }:
+
+{
+  imports = [
+    inputs.nixos-hardware.nixosModules.raspberry-pi-4
+    (modulesPath + "/installer/sd-card/sd-image-aarch64.nix")
+  ];
+
+  nixpkgs.overlays = [
+    (final: super: {
+      makeModulesClosure = x:
+        super.makeModulesClosure (x // { allowMissing = true; });
+    })
+  ];
+
+  boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_rpi4;
+  boot.supportedFilesystems = lib.mkForce [ "vfat" "btrfs" "tmpfs" ];
+
+  sdImage.compressImage = false;
+
+  networking.hostName = "nixos-pi";
+
+  services.openssh.enable = true;
+  security.sudo.wheelNeedsPassword = false;
+  users.users.kris = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" ];
+    openssh.authorizedKeys.keys = [
+       # TODO: replace this with your own SSH public key
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPDFfI9C3SaPCw2+K08jAs7B6CsQiIhF+H3oODy8WJf3 kris@KrisdeMacBook-Air.local"
+    ];
+  };
+
+  system.stateVersion = "23.11";
+  nixpkgs.hostPlatform = "aarch64-linux";
+}
+```
+
+Here's a example of `flake.nix`:
+
+```nix
+{
+  description = "Kris' NixOS Flake";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+  };
+
+  outputs = { self, nixpkgs, ... }@inputs:
+    let
+      inherit (self) outputs;
+    in
+    {
+      nixosConfigurations = {
+        nixos-pi-installer = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs outputs; };
+          modules = [ ./hosts/nixos-pi-installer ];
+        };
+      };
+    };
+}
+```
+
+I am cross compiling from my homelab server, by setting the following in `hosts/nixos-kris/default.nix` which describes my compiling machine in this case: [^5]
+
+```nix
+boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+```
+
+Build the image by running following commands:
+
+```sh
+nix build .#nixosConfigurations.nixos-pi-installer.config.system.build.sdImage --show-trace -L -v
+```
+
+And you should get a `.img` file under `result/sd-image`.
+
+## Burn the image to a USB drive
+
+I am doing this on my Mac. [^6]
+
+`diskutil list` to locate your drive `/dev/disk(n) (external, physical)`. And run the following commands:
+
+```sh
+diskutil unmountDisk /dev/disk(n)
+sudo dd if=./nixos-sd-image-23.11.*-aarch64-linux.img of=/dev/rdisk(n) bs=1m status=progress
+diskutil eject /dev/disk(n)
+```
+
+Once it's done, we get a bootable USB drive of our NixOS installer.
+
+## Write NixOS configuration which runs on the Raspberry Pi
+
+The very important part of this is the following:
+
+```nix
+{ lib, inputs, pkgs, ... }:
+
+{
+  imports = [
+    inputs.nixos-hardware.nixosModules.raspberry-pi-4
+  ];
+
+  nixpkgs.overlays = [
+    (final: super: {
+      makeModulesClosure = x:
+        super.makeModulesClosure (x // { allowMissing = true; });
+    })
+  ];
+
+  hardware.raspberry-pi."4".fkms-3d.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    libraspberrypi
+  ];
+
+  networking.networkmanager.wifi.powersave = false;
+
+  boot.kernelPackages = lib.mkForce pkgs.linuxKernel.packages.linux_rpi4;
+  boot.supportedFilesystems = lib.mkForce [ "vfat" "btrfs" "tmpfs" ];
+}
+```
+
+For `fileSystems` part, do refer to the [Partition](#partition) part below. Refer to [Impermence on NixOS Wiki](https://nixos.wiki/wiki/Impermanence) to setup data persistence on a system with tmpfs as root.
+
+## Install NixOS on Raspberry Pi
+
+First, `sudo poweroff` your Raspberry Pi. Then plug in the USB drive, don't forget to plugin an Ethernet cabel also. And plug in the power cabel to boot up. You will need to wait for minutes for the filesystem to be cleand up during the first boot of this installer. Finally you should see your Raspberry Pi on your network 🥳
+
+Once you find it, simply `ssh` to it to perform the following installation.
+
+In my configuration, `/dev/sda` is the installer, and `/dev/sdb` is a USB M.2 SSD as my installation target. It may be different in your situation, for example `/dev/mmcblk0` if you want to install to SD card, so please do adapt to your version of the following commands.
+
+### Partition
+
+```sh
+wipefs -a /dev/sdb
+parted /dev/sdb -- mklabel msdos
+parted /dev/sdb -- mkpart primary fat32 1M 512M
+parted /dev/sdb -- set 1 boot on
+parted /dev/sdb -- mkpart primary btrfs 512MiB 100%
+mkfs.vfat -F32 -n BOOT /dev/sdb1
+mkfs.btrfs -L NIXOS /dev/sdb2 -f
+
+mkdir -p /mnt/{boot,nix,swap}
+mount /dev/sdb1 /mnt/boot
+mount -o compress=zstd /dev/sdb2 /mnt/nix
+btrfs subvolume create /mnt/nix/swap
+mount -o noatime,subvol=swap /dev/sdb2 /mnt/swap
+btrfs filesystem mkswapfile --size 4g /mnt/swap/swapfile
+```
+
+This matches my `hosts/nixos-pi/hardware-configuration.nix`:
+
+```nix
+{
+  fileSystems."/" =
+    {
+      device = "none";
+      fsType = "tmpfs";
+      options = [ "relatime" "mode=755" "size=75%" ];
+    };
+
+  fileSystems."/boot" =
+    {
+      device = "/dev/disk/by-label/BOOT";
+      fsType = "vfat";
+    };
+
+  fileSystems."/nix" =
+    {
+      device = "/dev/disk/by-label/NIXOS";
+      fsType = "btrfs";
+      options = [ "compress=zstd" ];
+    };
+
+  fileSystems."/swap" =
+    {
+      device = "/dev/disk/by-label/NIXOS";
+      fsType = "btrfs";
+      options = [ "noatime" "subvol=swap" ];
+    };
+
+  swapDevices = [{ device = "/swap/swapfile"; }];
+}
+```
+
+### Install NixOS itself
+
+```sh
+mkdir -p /mnt/etc/nixos
+mkdir -p /mnt/nix/persist/etc/nixos
+mount -o bind /mnt/nix/persist/etc/nixos /mnt/etc/nixos
+
+git clone (redacted) /mnt/etc/nixos
+nixos-install --flake /mnt/etc/nixos#nixos-pi --no-root-password
+```
+
+### Copy firmware
+
+We need to have [U-Boot](https://search.nixos.org/packages?channel=23.11&show=ubootRaspberryPi4_64bit&from=0&size=50&sort=relevance&type=packages&query=ubootRaspberryPi4_64bit) in the first partition. Fortunately the installer image we built has all the files we need. [^7][^8]
+
+```sh
+mkdir /firmware
+mount /dev/sda1 /firmware
+cp /firmware/* /mnt/boot
+```
+
+### Reboot into new NixOS
+
+You are all set! Now `poweroff` the Raspberry Pi, disconnect the installer USB drive, and reconnect the power cabel. It should boot up into the newly installed NixOS very quickly.
+
+## Bonus: extra configuration of NixOS on Raspberry Pi
+
+### Bluetooth
+
+```nix
+hardware = {
+  bluetooth.enable = true;
+  bluetooth.powerOnBoot = true;
+
+  deviceTree.filter = "bcm2711-rpi-4*.dtb";
+  deviceTree.overlays = [
+    {
+      name = "bluetooth-overlay";
+      dtsText = ''
+        /dts-v1/;
+        /plugin/;
+
+        / {
+            compatible = "brcm,bcm2711";
+
+            fragment@0 {
+                target = <&uart0_pins>;
+                __overlay__ {
+                        brcm,pins = <30 31 32 33>;
+                        brcm,pull = <2 0 0 2>;
+                };
+            };
+        };
+      '';
+    }
+  ];
+};
+
+services.blueman.enable = true;
+systemd.services.btattach = {
+  before = [ "bluetooth.service" ];
+  after = [ "dev-ttyAMA0.device" ];
+  wantedBy = [ "multi-user.target" ];
+  serviceConfig = {
+    ExecStart = "${pkgs.bluez}/bin/btattach -B /dev/ttyAMA0 -P bcm -S 3000000";
+  };
+};
+```
+
+### Sound on HDMI
+
+`hardware.raspberry-pi."4".audio.enable = true;` won't work 🥲
+
+```nix
+sound.enable = true;
+hardware.pulseaudio.enable = true;
+boot.kernelParams = [ "snd_bcm2835.enable_hdmi=1" ];
+```
+
+---
+
+## References
+
+[^1]: https://wiki.nixos.org/wiki/NixOS_on_ARM#Upstream_(NixOS)_supported_devices
+[^2]: https://raspberrystreet.com/learn/how-to-boot-raspberrypi-from-usb-ssd
+[^3]: https://github.com/NixOS/nixpkgs/issues/191095#issuecomment-1320982678
+[^4]: https://github.com/NixOS/nixpkgs/issues/126755#issuecomment-869149243
+[^5]: https://nixos-and-flakes.thiscute.world/development/cross-platform-compilation#compile-through-emulated-system
+[^6]: https://osxdaily.com/2015/06/05/copy-iso-to-usb-drive-mac-os-x-command/
+[^7]: https://mgdm.net/weblog/nixos-on-raspberry-pi-4/#firmware
+[^8]: https://github.com/NixOS/nixpkgs/blob/5477b3525f9ac49086d15866b27c0db6dfa90b50/nixos/modules/installer/sd-card/sd-image-aarch64.nix#L22
