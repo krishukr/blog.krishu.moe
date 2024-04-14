@@ -25,7 +25,10 @@ OK, it's true that I had to use a monitor to debug during my installation. But s
 - tmpfs as root
 - btrfs as persistence
 
-<img src="https://img-cdn.akass.cn/12/2024/04/661b9ab68ccc7.png!wp" alt="A neofetch screenshot showing a NixOS running on Raspberry Pi 4 Model B"/>
+<picture>
+  <source srcset="https://img-cdn.akass.cn/12/2024/04/661b9fe90b6de.png!wp" media='(prefers-color-scheme: dark)' />
+  <img src="https://img-cdn.akass.cn/12/2024/04/661b9ab68ccc7.png!wp" alt="A neofetch screenshot showing a NixOS running on Raspberry Pi 4 Model B"/>
+</picture>
 
 ## Requirements
 

@@ -21,6 +21,30 @@ let themeValue = getPreferTheme();
 function setPreference() {
   localStorage.setItem("theme", themeValue);
   reflectPreference();
+  updateSourceMedia(themeValue);
+}
+
+function updateSourceMedia(colorPreference) {
+  const pictures = document.querySelectorAll("picture");
+
+  pictures.forEach(picture => {
+    const sources = picture.querySelectorAll(`
+        source[media*="prefers-color-scheme"], 
+        source[data-media*="prefers-color-scheme"]
+      `);
+
+    sources.forEach(source => {
+      if (source?.media.includes("prefers-color-scheme")) {
+        source.dataset.media = source.media;
+      }
+
+      if (source?.dataset.media.includes(colorPreference)) {
+        source.media = "all";
+      } else if (source) {
+        source.media = "none";
+      }
+    });
+  });
 }
 
 function reflectPreference() {
