@@ -22,8 +22,8 @@ OK, it's true that I had to use a monitor to debug during my installation. But s
 ## Highlights
 
 - Headless NixOS - i.e. no monitor or keyboard is needed to be connected on Raspberry Pi during the whole installation.
-- tmpfs as root
-- btrfs as persistence
+- tmpfs as root directory
+- btrfs as persistent storage
 
 <picture>
   <source srcset="https://img-cdn.akass.cn/12/2024/04/661b9fe90b6de.png!wp" media='(prefers-color-scheme: dark)' />
@@ -182,7 +182,7 @@ The very important part of this is the following:
 }
 ```
 
-For `fileSystems` part, do refer to the [Partition](#partition) part below. Refer to [Impermence on NixOS Wiki](https://nixos.wiki/wiki/Impermanence) to setup data persistence on a system with tmpfs as root.
+For the `fileSystems` part, do refer to the [Partition](#partition) part below. Refer to [Impermanence on NixOS Wiki](https://nixos.wiki/wiki/Impermanence) to setup data persistence on a system with a tmpfs as the root directory.
 
 ## Install NixOS on Raspberry Pi
 
