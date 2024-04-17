@@ -8,6 +8,7 @@ import { SITE } from "./src/config";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import icon from "astro-icon";
+import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
@@ -19,6 +20,7 @@ export default defineConfig({
     react(),
     sitemap(),
     icon(),
+    mdx(),
   ],
   markdown: {
     remarkPlugins: [
