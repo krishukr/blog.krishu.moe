@@ -35,7 +35,8 @@ export default defineConfig({
     ],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {
-      theme: "one-dark-pro",
+      // For more themes, visit https://shiki.style/themes
+      themes: { light: "min-light", dark: "one-dark-pro" },
       wrap: true,
     },
   },
