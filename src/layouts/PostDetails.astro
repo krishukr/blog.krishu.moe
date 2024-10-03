@@ -24,6 +24,7 @@ const {
   pubDatetime,
   modDatetime,
   tags,
+  lang,
 } = post.data;
 
 const { Content } = await post.render();
@@ -43,6 +44,7 @@ const layoutProps = {
   canonicalURL,
   ogImage: ogUrl,
   scrollSmooth: true,
+  lang,
 };
 ---
 
