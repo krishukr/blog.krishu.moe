@@ -21,6 +21,14 @@ const blog = defineCollection({
       description: z.string(),
       canonicalURL: z.string().optional(),
       lang: z.enum(["en", "zh-Hans"]).optional(),
+      editPost: z
+        .object({
+          disabled: z.boolean().optional(),
+          url: z.string().optional(),
+          text: z.string().optional(),
+          appendFilePath: z.boolean().optional(),
+        })
+        .optional(),
     }),
 });
 

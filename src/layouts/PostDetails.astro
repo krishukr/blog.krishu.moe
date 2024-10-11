@@ -25,6 +25,7 @@ const {
   modDatetime,
   tags,
   lang,
+  editPost,
 } = post.data;
 
 const { Content } = await post.render();
@@ -69,6 +70,8 @@ const layoutProps = {
       modDatetime={modDatetime}
       size="lg"
       className="my-2"
+      editPost={editPost}
+      postId={post.id}
     />
     <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
