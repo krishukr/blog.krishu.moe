@@ -9,6 +9,7 @@ export const SITE: Site = {
   lightAndDarkMode: true,
   postPerPage: 5,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
+  showArchives: true,
   editPost: {
     url: "https://github.com/krishukr/blog.krishu.moe/tree/master/src/content/blog",
     text: "Suggest Changes",
