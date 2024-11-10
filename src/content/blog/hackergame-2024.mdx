@@ -335,7 +335,7 @@ Indirect blocks:
 %Y     time of last data modification, seconds since Epoch
 ```
 
-那么我们只需要分别把两个文件的 `atime` 和 `ctime` 转换成 UNIX timestamp，替换到 `flag2.sh` 运行即可。
+那么我们只需要分别把两个文件的 `atime` 和 `mtime` 转换成 UNIX timestamp，替换到 `flag2.sh` 运行即可。
 
 然后我开始着手恢复 `flag1.txt`。我一开始想，啊，我都知道你文件 object 对应哪些 block 了，直接读这些 block （`zdb -R`） 不行吗。主要存在两个问题。其一，文件是被 gzip 压缩的，而 zdb -R 在信息熵不足的时候无法正确解压缩。其二，`flag1.txt` 有一部份块地址为 `EMBEDDED`，然后我当时没查到这个地址指的啥 🥲
 
