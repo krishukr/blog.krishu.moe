@@ -25,7 +25,7 @@ Hackergame 2024 是[中国科学技术大学第十一届信息安全大赛](http
 
 ## 签到
 
-浏览器调出开发者工具对前端代码进行审计，注意到 `function submitResult()` 中最后 ``window.location = `?pass=$\{allCorrect}`;``
+浏览器调出开发者工具对前端代码进行审计，注意到 `function submitResult()` 中最后 ``window.location = `?pass=${allCorrect}`;``
 
 于是地址后面加上 `?pass=true` 即可。
 
