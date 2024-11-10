@@ -65,7 +65,7 @@ interfaces of target providers).` (Ma et al., 2024)
 
 ```python
 game = session.post(
-    "http://202.38.93.141:12122/game",
+    "/game",
     cookies=cookies,
     headers=headers,
     json=json_data,
@@ -87,7 +87,7 @@ import time
 
 time.sleep(7)
 submit = session.post(
-    "http://202.38.93.141:12122/submit",
+    "/submit",
     cookies=cookies,
     headers=headers,
     json=results_json,
@@ -125,7 +125,7 @@ print(json.loads(submit.text))
 
 ```python
 response = requests.get(
-    "https://chal01-at8836of.hack-challenge.lug.ustc.edu.cn:8443/list",
+    "/list",
     cookies=cookies,
     headers=headers,
 )
@@ -133,7 +133,7 @@ tree = etree.HTML(response.text)
 links = tree.xpath("//ul//a/@href")
 for link in links:
     conv = requests.get(
-        "https://chal01-at8836of.hack-challenge.lug.ustc.edu.cn:8443" + link,
+        BASE_URL + link,
         cookies=cookies,
         headers=headers,
     )
