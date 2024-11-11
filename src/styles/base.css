@@ -151,3 +151,6 @@
 .katex {
   @apply text-skin-base;
 }
+.katex-display {
+  overflow: auto hidden;
+}
