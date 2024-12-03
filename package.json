@@ -16,11 +16,11 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.0",
-    "@astrojs/mdx": "^2.3.1",
+    "@astrojs/mdx": "^4.0.0",
     "@astrojs/rss": "^4.0.5",
     "@iconify-json/mdi": "^1.1.64",
     "@resvg/resvg-js": "^2.6.0",
-    "astro": "^4.3.5",
+    "astro": "^5.0.0",
     "astro-icon": "^1.1.0",
     "fuse.js": "^7.0.0",
     "github-slugger": "^2.0.0",
@@ -35,7 +35,7 @@
     "yaml": "^2.3.4"
   },
   "devDependencies": {
-    "@astrojs/react": "^3.0.10",
+    "@astrojs/react": "^4.0.0",
     "@astrojs/sitemap": "^3.0.5",
     "@astrojs/tailwind": "^5.1.0",
     "@divriots/jampack": "^0.28.0",
