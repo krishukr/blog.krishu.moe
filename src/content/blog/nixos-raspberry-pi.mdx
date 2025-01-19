@@ -1,7 +1,7 @@
 ---
 author: Kris Hu
 pubDatetime: 2024-04-14T17:01:27.000+08:00
-modDatetime:
+modDatetime: 2025-01-19T12:29:26.000+08:00
 title: Installing headless NixOS on Raspberry Pi
 featured: true
 draft: false
@@ -326,10 +326,11 @@ systemd.services.btattach = {
 `hardware.raspberry-pi."4".audio.enable = true;` won't work 🥲
 
 ```nix
-sound.enable = true;
 hardware.pulseaudio.enable = true;
 boot.kernelParams = [ "snd_bcm2835.enable_hdmi=1" ];
 ```
+
+_Update: `sound.enable` is no longer needed and has been removed._ [^9]
 
 ---
 
@@ -350,3 +351,5 @@ boot.kernelParams = [ "snd_bcm2835.enable_hdmi=1" ];
 [^7]: https://mgdm.net/weblog/nixos-on-raspberry-pi-4/#firmware
 
 [^8]: https://github.com/NixOS/nixpkgs/blob/5477b3525f9ac49086d15866b27c0db6dfa90b50/nixos/modules/installer/sd-card/sd-image-aarch64.nix#L22
+
+[^9]: https://github.com/NixOS/nixpkgs/commit/3eeff54780a1a8c73c82ca51987962b62bd4219e

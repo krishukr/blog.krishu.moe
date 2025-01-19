@@ -3,6 +3,8 @@ import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
+import remarkDirective from "remark-directive";
+import remarkCallout from "astro-starlight-remark-asides";
 import sitemap from "@astrojs/sitemap";
 import { SITE } from "./src/config";
 import remarkMath from "remark-math";
@@ -32,6 +34,8 @@ export default defineConfig({
         },
       ],
       remarkMath,
+      remarkDirective,
+      remarkCallout,
     ],
     rehypePlugins: [rehypeKatex],
     shikiConfig: {

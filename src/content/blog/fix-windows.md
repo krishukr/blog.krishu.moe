@@ -11,6 +11,10 @@ tags:
 description: 省流：Windows Update 搞坏的。
 ---
 
+:::caution
+这篇文章记录的情况发生于 2022 年，可能与当前情况有所不同。
+:::
+
 Windows Update ：）
 
 ## Table of contents
@@ -57,7 +61,7 @@ _Win + X_ 打开设备管理器。
 
 看图操作吧，懒得说了。
 
-import MultiColumn from "@components/MultiColumn.astro";
+<!-- import MultiColumn from "@components/MultiColumn.astro"; -->
 
 <img src="https://img-cdn.akass.cn/12/2022/08/62f378e337066.png!wp" />
 

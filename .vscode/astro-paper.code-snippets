@@ -1,6 +1,6 @@
 {
   "Frontmatter": {
-    "scope": "markdown",
+    "scope": "markdown,mdx",
     "prefix": "frontmatter",
     "body": [
       "---",
@@ -18,7 +18,7 @@
     "description": "Adds the frontmatter block for the AstroPaper Blog post"
   },
   "Blog Template": {
-    "scope": "markdown",
+    "scope": "markdown.mdx",
     "prefix": "template",
     "body": [
       "${1:frontmatter}",
@@ -32,8 +32,9 @@
     "description": "Adds the template for the AstroPaper Blog post. You will need to trigger the snippet modal on the 'frontmatter' line to insert the other snipper."
   },
   "Current Timestamp": {
-    "scope": "markdown",
     "prefix": "timestamp",
-    "body": [ "$CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND.000$CURRENT_TIMEZONE_OFFSET" ]
+    "body": [
+      "$CURRENT_YEAR-$CURRENT_MONTH-${CURRENT_DATE}T$CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND.000$CURRENT_TIMEZONE_OFFSET"
+    ]
   }
 }
