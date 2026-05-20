@@ -35,6 +35,35 @@ const title = "About Me";
         )
       }
 
+      <h2>I did</h2>
+      <Card
+        contents={[{ text: "Author", time: "2023-2025" }]}
+        description="A Rust bot that brings full-text CJK search for Telegram groups via inline queries, archived since CJK search has implemented by official. Set up a Nix Flake-based development/build environment and multi-architecture packaging workflow. Designed GitHub Actions CI/CD pipelines for PR testing, Docker image builds, GHCR publishing, multi-arch manifests, and automated release management."
+        ><PrettyLink
+          href="https://github.com/krishukr/telegram-cjk-search-bot"
+          className="font-semibold">Telegram CJK Search Bot</PrettyLink
+        ></Card
+      >
+      <Card
+        contents={[{ text: "Builder & Maintainer", time: "2022-present" }]}
+        description="Self-hosted virtualization infrastrure using VMware vSphere and Proxmox VE, providing services for family and friends. Empowered stable development environments with GPU available and easy-to-use testing environments, thanks to NixOS and containerization. Running a self-signed CA, load balancers, SD-WAN, and an observability that with alerting system. All services use the self-hosted SSO for authorization."
+        >HomeLab</Card
+      >
+      <Card
+        contents={[{ text: "Contributor", time: "2025-present" }]}
+        description="An open-source Matrix client. Contributed to the Web Push support. Also maintaining an open personal fork for aesthetic reasons and some quirks."
+        ><PrettyLink
+          href="https://github.com/krishukr/cinny"
+          className="font-semibold">Cinny</PrettyLink
+        >
+      </Card>
+      <Card contents={[{ text: "Contributor", time: "2024" }]}
+        ><PrettyLink
+          href="https://github.com/project-trans/MtF-wiki"
+          className="font-semibold">MtF.wiki</PrettyLink
+        ></Card
+      >
+
       <h2>I was educated in</h2>
       <Card
         contents={[
@@ -52,23 +81,6 @@ const title = "About Me";
       <Card contents={[{ text: "Vice Director", time: "2023-2024" }]}
         ><PrettyLink href="https://sflsgeek.com/" className="font-semibold"
           >Geek Club</PrettyLink
-        ></Card
-      >
-
-      <h2>I did</h2>
-      <Card contents={[{ text: "Author", time: "2023-present" }]}
-        ><PrettyLink
-          href="https://github.com/krishukr/telegram-cjk-search-bot"
-          className="font-semibold">Telegram CJK Search Bot</PrettyLink
-        ></Card
-      >
-      <Card contents={[{ text: "Builder & Maintainer", time: "2022-present" }]}
-        >HomeLab</Card
-      >
-      <Card contents={[{ text: "Contributor", time: "2024" }]}
-        ><PrettyLink
-          href="https://github.com/project-trans/MtF-wiki"
-          className="font-semibold">MtF.wiki</PrettyLink
         ></Card
       >
     </section>

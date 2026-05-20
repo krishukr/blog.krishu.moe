@@ -6,9 +6,10 @@ export interface Content {
 
 export interface Props {
   contents: Content[];
+  description?: string;
 }
 
-const { contents } = Astro.props;
+const { contents, description } = Astro.props;
 ---
 
 <h3><slot /></h3>
@@ -22,6 +23,7 @@ const { contents } = Astro.props;
     ))
   }
 </div>
+{description && <p class="description">{description}</p>}
 
 <style>
   .card-lines-wrapper {
@@ -34,5 +36,9 @@ const { contents } = Astro.props;
 
   .card-lines-wrapper p {
     @apply my-0 opacity-80;
+  }
+
+  .description {
+    @apply my-0 opacity-70;
   }
 </style>

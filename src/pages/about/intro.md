@@ -1,7 +1,9 @@
 I am a high school student living in Shenzhen, China.
 
 - English/Mandarin
-- Transgender girl 🏳️‍⚧️
+- I build things and make sure others can use them
+- Rust/NixOS/Neovim/Homelab
+- she/her
 
 <details><summary>GPG Public Key</summary>
 
@@ -99,8 +101,24 @@ fXwh9qNj45BLFBRuhoxpWxv4gVnN1diQbfkaYaoyZt5ACVOvmNsubY/V/VQS0dLj
 +QcyDMVVoav1hiVm/Ph+O4NLB+xp3VW9zQT+p/RDoxsOPzJj6uOY05mIsLk3GU+3
 PgsTlEn/wCY+7rt5VmRnsbg3nmvumaNm6vZQ6aprG0H83pSjl/W8n7D1yoYGvpHF
 Bdv6+PV/hTVvPumHAYs0MhiZyoKmjz0jycFC25w4mZnZS/e7n5fnxt+Bt8aFixUy
-ymcdYArMkBPt5yFJnsFHy6YOczmP901EMDHx+MbTDkzCfw==
-=XIuo
+ymcdYArMkBPt5yFJnsFHy6YOczmP901EMDHx+MbTDkzCf7gzBGoNVY4WCSsGAQQB
+2kcPAQEHQKCGN2X30BjNErJdCioTX6PW7ZHhA6jFXoq1n7odH6AziQKzBBgBCAAm
+FiEE0E9Ony3TxDrZoupT/MoxBBDoI3QFAmoNVY4CGwIFCQHhM4AAgQkQ/MoxBBDo
+I3R2IAQZFgoAHRYhBKySyjGORuYu1DPyybBcQpehiV3/BQJqDVWOAAoJELBcQpeh
+iV3/utIA/jcyNRsUtsm94qJJqP260WiqYTFQNQBVSB+jeUMJROWQAQDpUzj2YA14
+sNhXdErRhHiO+yjxvO9Sj5w/6hAnjOEBDRr2D/9hmKtr2cLqRqeEXqpI8TErpsW9
+hORxnZyYMrZd6dyr4reNhF5xBsOB0CfZ/+QgBxEqKeTHoazAPkC6qUcUGyqUILsp
+RF/szOlCaWfAZw8aFSywjFPCP7SUJmnlSe5rHq/kIjSs0EWbhLj5Jm2pY539wNfC
+qvUkgfAyfvXyUBX2OLWJDlUbvpRuoQhzl6Zo7cLqMEhVydGnNxYu01+CblixdYLW
+wr0dt20OAQ34BeKp5QMB6LvmfdsFcUYBj561K006MJ1H6P4tldXS0nJCioTSAk98
+qozxs4Nt6LS6P12VEnIVUoku+kqI5UTF4qzk/22SNewnOl84kflwJd0OY8mrC00H
+WcKW1bLSjVakiq3PxUY/ve23NNfDqk7feL64FhjUIqx/abcOiaAXFcPtmbM9G5du
+tJTq+WGclr4FGVscyaWz0Q7VdVAAo24WUidxaKSva0cgY6j3IggDY6lVF1LCwR4w
+O6PtoHQuZokau+deozjvj0OdTR04Z9OlJrtHEaBSCBNJGzRND1TnVJIiyVkyecVt
+reHU9KnKeLKrHSij+/2m768Q97YMblVGS2J/awyrT36tx5GuJdSIQnl2fumR2VZd
+2PB7JGq7pohuYLBBpsqQT1N0QIzcGA7Mx9ghyZ9cUD1v23ZFHkr0VcS6nwxWltIp
+9wGbdz2oDUiU2owbhA==
+=eOJV
 -----END PGP PUBLIC KEY BLOCK-----
 ```
 
